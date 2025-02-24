@@ -16,6 +16,6 @@ namespace HotelReservationSystem.Infrastructure.Models
         [Required]
         public bool Available { get; set; }
 
-        public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
+        public ICollection<Reservation> Reservas { get; set; } = new List<Reservation>();
     }
 }
