@@ -19,6 +19,6 @@ namespace HotelReservationSystem.Infrastructure.Models
         public DateTime SentDate { get; set; }
 
         // Navigation Property
-        public Client Client { get; set; } = null!;
+        public User Client { get; set; } = null!;
     }
 }
