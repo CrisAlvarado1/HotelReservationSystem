@@ -12,10 +12,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<HotelDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("HotelDbContext"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("HotelReservationConnection"));
 });
 
 var app = builder.Build();
+
+/* Create the database and apply migrations
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
+    context.Database.Migrate();
+}
+*/
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
