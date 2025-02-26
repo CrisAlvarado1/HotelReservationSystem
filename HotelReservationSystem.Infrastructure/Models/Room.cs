@@ -8,7 +8,7 @@ namespace HotelReservationSystem.Infrastructure.Models
         public int Id { get; set; }
 
         [Required, MaxLength(50)]
-        public string Tipo { get; set; }
+        public string Type { get; set; }
 
         [Required]
         public decimal PricePerNight { get; set; }
