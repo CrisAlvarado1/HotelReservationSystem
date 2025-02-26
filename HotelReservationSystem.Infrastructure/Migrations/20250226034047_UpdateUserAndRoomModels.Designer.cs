@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HotelReservationSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20250225194031_UpdateUserModel")]
-    partial class UpdateUserModel
+    [Migration("20250226034047_UpdateUserAndRoomModels")]
+    partial class UpdateUserAndRoomModels
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,7 +148,7 @@ namespace HotelReservationSystem.Infrastructure.Migrations
                     b.Property<decimal>("PricePerNight")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Tipo")
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");

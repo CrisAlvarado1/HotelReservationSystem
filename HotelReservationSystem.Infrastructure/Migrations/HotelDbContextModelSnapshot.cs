@@ -145,7 +145,7 @@ namespace HotelReservationSystem.Infrastructure.Migrations
                     b.Property<decimal>("PricePerNight")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Tipo")
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");

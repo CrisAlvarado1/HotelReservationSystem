@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HotelReservationSystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateUserModel : Migration
+    public partial class UpdateUserAndRoomModels : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,11 @@ namespace HotelReservationSystem.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Clients");
+
+            migrationBuilder.RenameColumn(
+                name: "Tipo",
+                table: "Rooms",
+                newName: "Type");
 
             migrationBuilder.CreateTable(
                 name: "Users",
@@ -69,6 +74,11 @@ namespace HotelReservationSystem.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.RenameColumn(
+                name: "Type",
+                table: "Rooms",
+                newName: "Tipo");
 
             migrationBuilder.CreateTable(
                 name: "Clients",
