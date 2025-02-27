@@ -2,6 +2,7 @@
 using HotelReservationSystem.Core.Services;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Infrastructure.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelReservationSystem.Tests;
 
@@ -94,10 +95,35 @@ public class RoomServiceTests
         };
 
         // Act
-        var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
+        var ex = Assert.ThrowsAsync<ArgumentException>(async () =>
             await _roomService.RegisterRoomAsync(invalidPriceRoom));
 
         // Assert
-        Assert.AreEqual("The price per night must be greater than zero.", exception.Message);
+        Assert.AreEqual("The price per night must be greater than zero.", ex.Message);
+    }
+
+    /// <summary>
+    /// TC-RH-004 - Test to verify that a ValidationException is thrown when the room type is empty or null.
+    /// </summary>
+    [Test]
+    [TestCase("")]
+    [TestCase("   ")]
+    public void RegisterRoom_EmptyRoomType_ShouldThrowValidationException(string invalidType)
+    {
+        // Arrange
+        var emptyTypeRoom = new Room
+        {
+            Id = 3,
+            Type = invalidType,
+            PricePerNight = 100.00m,
+            Available = true
+        };
+
+        // Act
+        var ex = Assert.ThrowsAsync<ValidationException>(async () =>
+            await _roomService.RegisterRoomAsync(emptyTypeRoom));
+
+        // Assert
+        Assert.AreEqual("The room type is required.", ex.Message);
     }
 }
