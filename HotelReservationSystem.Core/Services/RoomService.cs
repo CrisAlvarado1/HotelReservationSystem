@@ -17,17 +17,18 @@ namespace HotelReservationSystem.Core.Services
 
         public async Task<Room> RegisterRoomAsync(Room room)
         {
-            // Validar datos de entrada
             if (room == null)
                 throw new ArgumentNullException(nameof(room), "The room cannot be null.");
 
             if (string.IsNullOrWhiteSpace(room.Type))
-                throw new ValidationException("The type of room is mandatory.");
+                throw new ValidationException("The room type is required.");
 
             if (room.PricePerNight <= 0)
                 throw new ArgumentException("The price per night must be greater than zero.");
 
-            // Registrar la habitación
+            if (await _roomRepository.FindByIdAsync(room.Id) != null)
+                throw new InvalidOperationException("A room with the same number already exists.");
+
             var registeredRoom = await _roomRepository.AddAsync(room);
             return registeredRoom;
         }

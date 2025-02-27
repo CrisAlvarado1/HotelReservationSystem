@@ -21,5 +21,10 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
             return room;
         }
+
+        public async Task<Room> FindByIdAsync(int id)
+        {
+            return await _context.Rooms.FindAsync(id);
+        }
     }
 }
