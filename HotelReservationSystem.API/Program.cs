@@ -1,4 +1,8 @@
+using HotelReservationSystem.Core.Interfaces;
+using HotelReservationSystem.Core.Services;
 using HotelReservationSystem.Infrastructure.Data;
+using HotelReservationSystem.Infrastructure.Interfaces;
+using HotelReservationSystem.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +18,12 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("HotelReservationConnection"));
 });
+
+// Register Repositories
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+
+// Register Services
+builder.Services.AddScoped<IRoomService, RoomService>();
 
 var app = builder.Build();
 
