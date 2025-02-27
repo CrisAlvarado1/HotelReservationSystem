@@ -126,4 +126,22 @@ public class RoomServiceTests
         // Assert
         Assert.AreEqual("The room type is required.", ex.Message);
     }
+
+    /// <summary>
+    /// TC-RH-005 - Test to verify that an ArgumentNullException is thrown when passing a null room.
+    /// </summary>
+    [Test]
+    public void RegisterRoom_NullInput_ShouldThrowArgumentNullException()
+    {
+        // Act
+        Room nullRoom = null;
+
+        // Act
+        var ex = Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await _roomService.RegisterRoomAsync(nullRoom));
+
+        // Assert
+        StringAssert.StartsWith("The room cannot be null.", ex.Message);
+        Assert.AreEqual("room", ex.ParamName);
+    }
 }
