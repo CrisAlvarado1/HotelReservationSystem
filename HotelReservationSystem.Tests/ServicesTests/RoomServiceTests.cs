@@ -75,4 +75,29 @@ public class RoomServiceTests
         _roomRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Room>()), Times.Never);
         _roomRepositoryMock.Verify(repo => repo.FindByIdAsync(It.IsAny<int>()), Times.Once);
     }
+
+    /// <summary>
+    /// TC-RH-003 - Test to verify that an ArgumentException is thrown when the price is zero or negative.
+    /// </summary>
+    [Test]
+    [TestCase(0.00)]
+    [TestCase(-10.00)]
+    public void RegisterRoom_InvalidPrice_ShouldThrowArgumentException(decimal invalidPrice)
+    {
+        // Arrange
+        var invalidPriceRoom = new Room
+        {
+            Id = 2,
+            Type = "Standard",
+            PricePerNight = invalidPrice,
+            Available = true
+        };
+
+        // Act
+        var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
+            await _roomService.RegisterRoomAsync(invalidPriceRoom));
+
+        // Assert
+        Assert.AreEqual("The price per night must be greater than zero.", exception.Message);
+    }
 }
