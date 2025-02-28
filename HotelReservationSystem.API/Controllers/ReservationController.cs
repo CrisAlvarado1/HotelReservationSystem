@@ -41,6 +41,21 @@ namespace HotelReservationSystem.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelReservationAsync(int id)
+        {
+            try
+            {
+                await _reservationService.CancelReservationAsync(id);
+
+                return Ok("Reservation canceled succesfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 
 }
