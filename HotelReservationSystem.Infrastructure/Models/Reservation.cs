@@ -23,9 +23,9 @@ namespace HotelReservationSystem.Infrastructure.Models
 
         [Required]
         public ReservationStatus Status { get; set; } = ReservationStatus.Confirmed; // Default Value
-
-        // Navigation Properties
-        public User Client { get; set; } = null!;
-        public Room Room { get; set; } = null!;
+       
+      // Navigation Properties
+        public User? Client { get; set; }
+        public Room? Room { get; set; }
     }
 }
