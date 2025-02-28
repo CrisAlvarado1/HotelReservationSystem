@@ -144,4 +144,32 @@ public class RoomServiceTests
         StringAssert.StartsWith("The room cannot be null.", ex.Message);
         Assert.AreEqual("room", ex.ParamName);
     }
+
+    /// <summary>
+    /// TC-SH-006 - Test to verify that the search method returns rooms of a specific type.
+    /// <summary>
+    [Test]
+    public async Task SearchRooms_ByType_ReturnsMatchingRooms()
+    {
+        // Arrange
+        var type = "Double";
+        var expectedRooms = new List<Room>
+            {
+                new Room { Id = 1, Type = "Double", PricePerNight = 150.00m, Available = true },
+                new Room { Id = 2, Type = "Double", PricePerNight = 150.00m, Available = true }
+            };
+
+        _roomRepositoryMock.Setup(repo => repo.SearchAsync(type, null, null, null))
+                           .ReturnsAsync(expectedRooms);
+
+        // Act
+        var result = await _roomService.SearchAsync(type, null, null, null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(expectedRooms.Count, result.Count());
+        Assert.IsTrue(result.All(r => r.Type == "Double"));
+
+        _roomRepositoryMock.Verify(repo => repo.SearchAsync(type, null, null, null), Times.Once);
+    }
 }

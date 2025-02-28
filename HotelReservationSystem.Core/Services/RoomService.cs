@@ -32,5 +32,10 @@ namespace HotelReservationSystem.Core.Services
             var registeredRoom = await _roomRepository.AddAsync(room);
             return registeredRoom;
         }
+
+        public async Task<IEnumerable<Room>> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available)
+        {
+            return await _roomRepository.SearchAsync(type, minPrice, maxPrice, available);
+        }
     }
 }
