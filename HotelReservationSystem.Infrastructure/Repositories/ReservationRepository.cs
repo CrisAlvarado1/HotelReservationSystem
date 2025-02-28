@@ -34,5 +34,14 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> HasConfirmedReservationsAsync(int roomId, DateTime startDate, DateTime endDate, int? excludeReservationId = null)
+        {
+            return await _context.Reservations
+                .Where(r => r.RoomId == roomId &&
+                r.Status == HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed &&
+                (excludeReservationId == null || r.Id != excludeReservationId) &&
+                startDate < r.EndDate && endDate > r.StartDate).AnyAsync();
+        }
     }
 }
