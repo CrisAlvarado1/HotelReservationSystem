@@ -1,5 +1,10 @@
+using HotelReservationSystem.Core.Interfaces;
+using HotelReservationSystem.Core.Services;
 using HotelReservationSystem.Infrastructure.Data;
+using HotelReservationSystem.Infrastructure.Interfaces;
+using HotelReservationSystem.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +19,23 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("HotelReservationConnection"));
 });
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+
+        options.JsonSerializerOptions.MaxDepth = 64;
+    });
+
+// Register Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Register Services
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 var app = builder.Build();
 
