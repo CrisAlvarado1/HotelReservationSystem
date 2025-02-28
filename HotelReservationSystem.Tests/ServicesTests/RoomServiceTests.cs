@@ -149,26 +149,27 @@ public class RoomServiceTests
     /// TC-SH-006 - Test to verify that the search method returns rooms of a specific type.
     /// </summary>
     [Test]
-    public async Task SearchRooms_ByType_ReturnsMatchingRooms()
+    public async Task SearchRooms_ByType_ShouldReturnsMatchingRooms()
     {
         // Arrange
         var type = "Double";
-        var expectedRooms = new List<Room>
+        var allRooms = new List<Room>
             {
-                new Room { Id = 1, Type = "Double", PricePerNight = 150.00m, Available = true },
-                new Room { Id = 2, Type = "Double", PricePerNight = 150.00m, Available = true }
+                new() { Id = 1, Type = "Double", PricePerNight = 150.00m, Available = true },
+                new() { Id = 2, Type = "Double", PricePerNight = 150.00m, Available = true },
+                new() { Id = 2, Type = "Single", PricePerNight = 120.00m, Available = true }
             };
 
         _roomRepositoryMock.Setup(repo => repo.SearchAsync(type, null, null, null))
-                           .ReturnsAsync(expectedRooms);
+                           .ReturnsAsync(allRooms);
 
         // Act
         var result = await _roomService.SearchAsync(type, null, null, null);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(expectedRooms.Count, result.Count());
-        Assert.IsTrue(result.All(r => r.Type == "Double"));
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count(), Is.EqualTo(2));
+        Assert.That(result.All(r => r.Type.Contains("Double")), Is.True);
 
         _roomRepositoryMock.Verify(repo => repo.SearchAsync(type, null, null, null), Times.Once);
     }
@@ -177,35 +178,63 @@ public class RoomServiceTests
     ///  TC-SH-007 - Test to verify that the search method returns rooms within a specific price range.
     /// </summary>
     [Test]
-    public async Task SearchRooms_ByPriceRange_ReturnsMatchingRoom()
+    public async Task SearchRooms_ByPriceRange_ShouldReturnsMatchingRoom()
     {
         // Arrange
         var minPrice = 100.00m;
         var maxPrice = 200.00m;
-        var expectedRooms = new List<Room>
+        var allRooms = new List<Room>
             {
-                new Room { Id = 1, Type = "Double", PricePerNight = 150.00m, Available = true },
-                new Room { Id = 2, Type = "Standard", PricePerNight = 120.00m, Available = true }
-            };
-
-        var roomsWithOutliers = new List<Room>(expectedRooms)
-            {
-                new Room { Id = 3, Type = "Suite", PricePerNight = 80.00m, Available = true },
-                new Room { Id = 4, Type = "Luxury", PricePerNight = 220.00m, Available = true }
+                new() { Id = 1, Type = "Double", PricePerNight = 150.00m, Available = true },
+                new() { Id = 2, Type = "Single", PricePerNight = 120.00m, Available = true },
+                new() { Id = 3, Type = "Suite", PricePerNight = 80.00m, Available = true },
+                new() { Id = 4, Type = "Jr Suite", PricePerNight = 220.00m, Available = true }
             };
 
         _roomRepositoryMock.Setup(repo => repo.SearchAsync(null, minPrice, maxPrice, null))
-                           .ReturnsAsync(roomsWithOutliers);
+                           .ReturnsAsync(allRooms);
 
         // Act
         var result = await _roomService.SearchAsync(null, minPrice, maxPrice, null);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(expectedRooms.Count, result.Count());
-        Assert.IsTrue(result.All(r => r.PricePerNight >= minPrice && r.PricePerNight <= maxPrice),
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count(), Is.EqualTo(2));
+        Assert.That(result.All(r => r.PricePerNight >= minPrice && r.PricePerNight <= maxPrice), Is.True,
             "All returned rooms should be within the specified price range.");
 
         _roomRepositoryMock.Verify(repo => repo.SearchAsync(null, minPrice, maxPrice, null), Times.Once);
+    }
+
+    /// <summary>
+    /// TC-SH-008 - Test to verify that the search method returns available rooms.
+    /// </summary>
+    [Test]
+    public async Task SearchRooms_ByAvailability_ShouldReturnsAvailableRooms()
+    {
+        // Arrange
+        var available = true;
+
+        var allRooms = new List<Room>
+            {
+                new() { Id = 1, Type = "Double", PricePerNight = 150.00m, Available = true },
+                new() { Id = 2, Type = "Single", PricePerNight = 120.00m, Available = true },
+                new() { Id = 3, Type = "Suite", PricePerNight = 220.00m, Available = false }
+            };
+
+        _roomRepositoryMock.Setup(repo => repo.SearchAsync(null, null, null, available))
+                           .ReturnsAsync(allRooms);
+
+        // Act
+        var result = await _roomService.SearchAsync(null, null, null, available);
+
+        // Assert
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count(), Is.EqualTo(2));
+        Assert.That(result.All(r => r.Available == available), Is.True,
+            "All returned rooms should be marked as available.");
+
+        _roomRepositoryMock.Verify(repo => repo.SearchAsync(null, null, null, available), Times.Once);
     }
 }

@@ -37,8 +37,10 @@ namespace HotelReservationSystem.Core.Services
         {
             var rooms = await _roomRepository.SearchAsync(type, minPrice, maxPrice, available);
 
-            return rooms.Where(r => (!minPrice.HasValue || r.PricePerNight >= minPrice.Value)
-                                 && (!maxPrice.HasValue || r.PricePerNight <= maxPrice.Value));
+            return rooms.Where(r => (string.IsNullOrEmpty(type) || r.Type.Contains(type))
+                                 && (!minPrice.HasValue || r.PricePerNight >= minPrice.Value)
+                                 && (!maxPrice.HasValue || r.PricePerNight <= maxPrice.Value)
+                                 && (!available.HasValue || r.Available == available.Value));
         }
     }
 }
