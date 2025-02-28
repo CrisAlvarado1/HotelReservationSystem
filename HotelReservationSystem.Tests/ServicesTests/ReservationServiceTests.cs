@@ -39,9 +39,9 @@ namespace HotelReservationSystem.Tests
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
-                               .ReturnsAsync(true); // The room is available
+                               .ReturnsAsync(true); 
             _reservationRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<Reservation>()))
-                                     .ReturnsAsync(reservation); // We simulate that the reservation is added
+                                     .ReturnsAsync(reservation);
 
             // Act
             var result = await _reservationService.ReserveRoomAsync(reservation);
@@ -146,7 +146,7 @@ namespace HotelReservationSystem.Tests
                 ClientId = 1,
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(3), // Start date later than end date
-                EndDate = DateTime.Now.AddDays(1),   // Earlier end date
+                EndDate = DateTime.Now.AddDays(1), 
                 Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
