@@ -259,4 +259,23 @@ public class RoomServiceTests
         Assert.That(exception.Message, Is.EqualTo("Invalid price range provided."));
     }
 
+    /// <summary>
+    /// TC-SH-010 - Test to verify that an empty list is returned when no rooms match the search criteria.
+    /// </summary>
+    [Test]
+    public async Task SearchRooms_EmptyResult_ShouldReturnsEmptyList()
+    {
+        // Arrange
+        var type = "Triple";
+
+        _roomRepositoryMock.Setup(repo => repo.SearchAsync(type, 100.00m, 110.00m, true))
+                           .ReturnsAsync(new List<Room>());
+
+        // Act
+        var result = await _roomService.SearchAsync(type, 100.00m, 110.00m, true);
+
+        // Assert
+        Assert.That(result, Is.Not.Null, "The result should not be null.");
+        Assert.That(result, Is.Empty, "The result should be an empty list.");
+    }
 }
