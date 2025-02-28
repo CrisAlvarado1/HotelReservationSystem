@@ -22,7 +22,7 @@ namespace HotelReservationSystem.Tests
         }
 
         /// <summary>
-        /// TC-RES-001: Verifica que una reserva válida se crea correctamente y actualiza el estado de la habitación.
+        /// TC-RES-001: Verifies that a valid reservation is created correctly and updates the room status.
         /// </summary>
         [Test]
         public async Task ReserveRoom_ValidData_ShouldReserveSuccessfully()
@@ -33,32 +33,32 @@ namespace HotelReservationSystem.Tests
                 Id = 1,
                 ClientId = 1,
                 RoomId = 1,
-                StartDate = DateTime.Now.AddDays(1), // Fecha futura
-                EndDate = DateTime.Now.AddDays(3),   // Fecha posterior a StartDate
+                StartDate = DateTime.Now.AddDays(1), // Future date
+                EndDate = DateTime.Now.AddDays(3),   // Date after StartDate
                 Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
-                               .ReturnsAsync(true); // La habitación está disponible
+                               .ReturnsAsync(true); // The room is available
             _reservationRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<Reservation>()))
-                                     .ReturnsAsync(reservation); // Simulamos que se agrega la reserva
+                                     .ReturnsAsync(reservation); // We simulate that the reservation is added
 
             // Act
             var result = await _reservationService.ReserveRoomAsync(reservation);
 
             // Assert
-            Assert.IsNotNull(result); // Verificamos que el resultado no sea nulo
-            Assert.AreEqual(reservation.ClientId, result.ClientId); // Cliente correcto
-            Assert.AreEqual(reservation.RoomId, result.RoomId); // Habitación correcta
-            Assert.AreEqual(HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed, result.Status); // Estado confirmado
+            Assert.IsNotNull(result); // We verify that the result is not null
+            Assert.AreEqual(reservation.ClientId, result.ClientId); // Correct client
+            Assert.AreEqual(reservation.RoomId, result.RoomId); // Correct room
+            Assert.AreEqual(HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed, result.Status); // Confirmed status
 
-            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Se verifica disponibilidad
-            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.Is<Reservation>(r => r.RoomId == 1)), Times.Once); // Se agrega la reserva
-            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(reservation.RoomId, false), Times.Once); // Se actualiza el estado de la habitación
+            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Availability is checked
+            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.Is<Reservation>(r => r.RoomId == 1)), Times.Once); // The reservation is added
+            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(reservation.RoomId, false), Times.Once); // The room status is updated
         }
 
         /// <summary>
-        /// TC-RES-002: Verifica que se lanza una excepción si la habitación no está disponible.
+        /// TC-RES-002: Verifies that an exception is thrown if the room is not available.
         /// </summary>
         [Test]
         public async Task ReserveRoom_RoomNotAvailable_ShouldThrowException()
@@ -75,20 +75,20 @@ namespace HotelReservationSystem.Tests
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
-                               .ReturnsAsync(false); // La habitación no está disponible
+                               .ReturnsAsync(false); // The room is not available
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _reservationService.ReserveRoomAsync(reservation));
             Assert.AreEqual("The room is not available for the selected dates.", ex.Message);
 
-            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Se verifica disponibilidad
-            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // No se agrega la reserva
-            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // No se actualiza el estado
+            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Availability is checked
+            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // The reservation is not added
+            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // The status is not updated
         }
 
         /// <summary>
-        /// TC-RES-003: Verifica que se lanza una excepción si la fecha de inicio está en el pasado.
+        /// TC-RES-003: Verifies that an exception is thrown if the start date is in the past.
         /// </summary>
         [Test]
         public async Task ReserveRoom_PastStartDate_ShouldThrowArgumentException()
@@ -99,7 +99,7 @@ namespace HotelReservationSystem.Tests
                 Id = 1,
                 ClientId = 1,
                 RoomId = 1,
-                StartDate = DateTime.Now.AddDays(-1), // Fecha en el pasado
+                StartDate = DateTime.Now.AddDays(-1), // Past date
                 EndDate = DateTime.Now.AddDays(3),
                 Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
@@ -109,13 +109,13 @@ namespace HotelReservationSystem.Tests
                 await _reservationService.ReserveRoomAsync(reservation));
             Assert.AreEqual("The start date cannot be in the past.", ex.Message);
 
-            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never); // No se verifica disponibilidad
-            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // No se agrega la reserva
-            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // No se actualiza el estado
+            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never); // Availability is not checked
+            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // The reservation is not added
+            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // The status is not updated
         }
 
         /// <summary>
-        /// TC-RES-004: Verifica que se lanza una excepción si la reserva es nula.
+        /// TC-RES-004: Verifies that an exception is thrown if the reservation is null.
         /// </summary>
         [Test]
         public async Task ReserveRoom_NullReservation_ShouldThrowArgumentNullException()
@@ -128,13 +128,13 @@ namespace HotelReservationSystem.Tests
                 await _reservationService.ReserveRoomAsync(reservation));
             Assert.AreEqual("The reservation cannot be null. (Parameter 'reservation')", ex.Message);
 
-            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never); // No se verifica disponibilidad
-            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // No se agrega la reserva
-            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // No se actualiza el estado
+            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never); // Availability is not checked
+            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // The reservation is not added
+            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // The status is not updated
         }
 
         /// <summary>
-        /// TC-RES-005: Verifica que se lanza una excepción si la fecha de fin es anterior a la de inicio.
+        /// TC-RES-005: Verifies that an exception is thrown if the end date is earlier than the start date.
         /// </summary>
         [Test]
         public async Task ReserveRoom_EndDateBeforeStartDate_ShouldThrowArgumentException()
@@ -145,8 +145,8 @@ namespace HotelReservationSystem.Tests
                 Id = 1,
                 ClientId = 1,
                 RoomId = 1,
-                StartDate = DateTime.Now.AddDays(3), // Fecha de inicio posterior a la de fin
-                EndDate = DateTime.Now.AddDays(1),   // Fecha de fin anterior
+                StartDate = DateTime.Now.AddDays(3), // Start date later than end date
+                EndDate = DateTime.Now.AddDays(1),   // Earlier end date
                 Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
@@ -155,13 +155,13 @@ namespace HotelReservationSystem.Tests
                 await _reservationService.ReserveRoomAsync(reservation));
             Assert.AreEqual("The start date must be earlier than the end date.", ex.Message);
 
-            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never); // No se verifica disponibilidad
-            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // No se agrega la reserva
-            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // No se actualiza el estado
+            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never); // Availability is not checked
+            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // The reservation is not added
+            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // The status is not updated
         }
 
         /// <summary>
-        /// TC-RES-006: Verifica que se lanza una excepción si la habitación no existe.
+        /// TC-RES-006: Verifies that an exception is thrown if the room does not exist.
         /// </summary>
         [Test]
         public async Task ReserveRoom_RoomDoesNotExist_ShouldThrowException()
@@ -171,27 +171,27 @@ namespace HotelReservationSystem.Tests
             {
                 Id = 1,
                 ClientId = 1,
-                RoomId = 999, // ID de habitación que no existe
+                RoomId = 999, // Room ID that does not exist
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
                 Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
-                               .ReturnsAsync(false); // Simulamos que la habitación no existe o no está disponible
+                               .ReturnsAsync(false); // We simulate that the room does not exist or is not available
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _reservationService.ReserveRoomAsync(reservation));
             Assert.AreEqual("The room is not available for the selected dates.", ex.Message);
 
-            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Se verifica disponibilidad
-            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // No se agrega la reserva
-            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // No se actualiza el estado
+            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Availability is checked
+            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // The reservation is not added
+            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // The status is not updated
         }
 
         /// <summary>
-        /// TC-RES-007: Verifica que no se actualiza el estado de la habitación si la reserva falla por fechas solapadas.
+        /// TC-RES-007: Verifies that the room status is not updated if the reservation fails due to overlapping dates.
         /// </summary>
         [Test]
         public async Task ReserveRoom_OverlappingDates_ShouldNotUpdateRoomAvailability()
@@ -208,20 +208,20 @@ namespace HotelReservationSystem.Tests
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
-                               .ReturnsAsync(false); // Simulamos que hay un solapamiento
+                               .ReturnsAsync(false); // We simulate that there is an overlap
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _reservationService.ReserveRoomAsync(reservation));
             Assert.AreEqual("The room is not available for the selected dates.", ex.Message);
 
-            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Se verifica disponibilidad
-            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // No se agrega la reserva
-            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // No se actualiza el estado
+            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Availability is checked
+            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Reservation>()), Times.Never); // The reservation is not added
+            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // The status is not updated
         }
 
         /// <summary>
-        /// TC-RES-008: Verifica que se lanza una excepción si RoomId es inválido (por ejemplo, 0).
+        /// TC-RES-008: Verifies that an exception is thrown if RoomId is invalid (e.g., 0).
         /// </summary>
         [Test]
         public async Task ReserveRoom_InvalidRoomId_ShouldThrowValidationException()
@@ -231,25 +231,25 @@ namespace HotelReservationSystem.Tests
             {
                 Id = 1,
                 ClientId = 1,
-                RoomId = 0, // RoomId inválido
+                RoomId = 0, // Invalid RoomId
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
                 Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
-                               .ReturnsAsync(true); // Simulamos que la validación de disponibilidad pasa
+                               .ReturnsAsync(true); // We simulate that the availability check passes
             _reservationRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<Reservation>()))
-                                     .ThrowsAsync(new ValidationException("RoomId must be greater than zero.")); // Simulamos que EF Core lanza una excepción
+                                     .ThrowsAsync(new ValidationException("RoomId must be greater than zero.")); // We simulate that EF Core throws an exception
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<ValidationException>(async () =>
                 await _reservationService.ReserveRoomAsync(reservation));
             Assert.AreEqual("RoomId must be greater than zero.", ex.Message);
 
-            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Se verifica disponibilidad
-            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.Is<Reservation>(r => r.RoomId == 0)), Times.Once); // Intenta agregar la reserva
-            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // No se actualiza el estado porque falla antes
+            _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Availability is checked
+            _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.Is<Reservation>(r => r.RoomId == 0)), Times.Once); // Attempts to add the reservation
+            _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never); // The status is not updated because it fails earlier
         }
     }
 }
