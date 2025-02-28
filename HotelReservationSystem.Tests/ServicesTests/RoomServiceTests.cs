@@ -237,4 +237,26 @@ public class RoomServiceTests
 
         _roomRepositoryMock.Verify(repo => repo.SearchAsync(null, null, null, available), Times.Once);
     }
+
+    /// <summary>
+    /// TC-SH-009 - Test to verify that an exception is thrown when invalid price range values are provided.
+    /// </summary>
+    [Test]
+    [TestCase(-10.00, 200.00)]
+    [TestCase(200.00, 100.00)]
+    [TestCase(null, -50.00)]
+    public async Task SearchRooms_InvalidPriceRange_ShouldThrowException(decimal? minPrice, decimal? maxPrice)
+    {
+        // Arrange
+        var invalidMinPrice = minPrice;
+        var invalidMaxPrice = maxPrice;
+
+        // Act & Assert
+        var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
+            await _roomService.SearchAsync(null, invalidMinPrice, invalidMaxPrice, null));
+
+        // Assert
+        Assert.That(exception.Message, Is.EqualTo("Invalid price range provided."));
+    }
+
 }
