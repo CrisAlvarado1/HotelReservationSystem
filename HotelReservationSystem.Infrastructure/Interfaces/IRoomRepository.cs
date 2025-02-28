@@ -7,5 +7,9 @@ namespace HotelReservationSystem.Infrastructure.Interfaces
         Task<Room> AddAsync(Room room);
 
         Task<Room> FindByIdAsync(int id);
+
+        Task<bool> IsRoomAvailable(int romId, DateTime startDate, DateTime endDate);
+
+        Task UpdateAvailabilityAsync(int roomId, bool available);
     }
 }
