@@ -254,6 +254,11 @@ namespace HotelReservationSystem.Infrastructure.Migrations
                 {
                     b.Navigation("Reservations");
                 });
+
+            modelBuilder.Entity("HotelReservationSystem.Infrastructure.Models.User", b =>
+                {
+                    b.Navigation("Reservations");
+                });
 #pragma warning restore 612, 618
         }
     }

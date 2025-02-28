@@ -35,10 +35,14 @@ builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 // Register Services
 builder.Services.AddScoped<IRoomService, RoomService>();
 
 builder.Services.AddScoped<IReservationService, ReservationService>();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
