@@ -52,17 +52,17 @@ namespace HotelReservationSystem.Core.Services
 
             if (reservation == null)
             {
-                throw new InvalidOperationException("Reservation not found");
+                throw new InvalidOperationException("Reservation not found.");
             }
 
             if (reservation.Status != HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed)
             {
-                throw new InvalidOperationException("Only confirmed reservation can be canceled");
+                throw new InvalidOperationException("Only confirmed reservations can be canceled.");
             }
 
             if (reservation.StartDate < DateTime.Now.Date)
             {
-                throw new InvalidOperationException("Cannot cancel a reservation that has already started or passed");
+                throw new InvalidOperationException("Cannot cancel a reservation that has already started or passed.");
             }
 
             reservation.Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Canceled;
