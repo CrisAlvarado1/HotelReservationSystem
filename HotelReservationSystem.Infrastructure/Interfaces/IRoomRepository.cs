@@ -7,5 +7,7 @@ namespace HotelReservationSystem.Infrastructure.Interfaces
         Task<Room> AddAsync(Room room);
 
         Task<Room> FindByIdAsync(int id);
+
+        Task<IEnumerable<Room>> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available);
     }
 }
