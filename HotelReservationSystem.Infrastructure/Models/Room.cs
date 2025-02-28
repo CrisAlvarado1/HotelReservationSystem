@@ -14,8 +14,8 @@ namespace HotelReservationSystem.Infrastructure.Models
         public decimal PricePerNight { get; set; }
 
         [Required]
-        public bool Available { get; set; }
+        public bool Available { get; set; } = true;
 
-        public ICollection<Reservation> Reservas { get; set; } = new List<Reservation>();
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }
