@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace HotelReservationSystem.Tests
 {
     [TestFixture]
-    public class CancelReservationTests
+    public class CancelReservationServiceTests
     {
         private Mock<IRoomRepository> _roomRepositoryMock;
         private Mock<IReservationRepository> _reservationRepositoryMock;
@@ -22,7 +22,9 @@ namespace HotelReservationSystem.Tests
             _reservationRepositoryMock = new Mock<IReservationRepository>();
             _reservationService = new ReservationService(_reservationRepositoryMock.Object, _roomRepositoryMock.Object);
         }
-
+        /// <summary>
+        /// TC-CAN-001: Verify that a confirmed reservation can be canceled and the room is freed if there are no other reservations.
+        /// </summary>
         [Test]
         public async Task CancelReservationAsync_ConfirmedReservation_CancelsSuccessfully()
         {
@@ -53,6 +55,9 @@ namespace HotelReservationSystem.Tests
             _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(reservation.RoomId, true), Times.Once());
         }
 
+        /// <summary>
+        /// TC-CAN-002: Verify that it throws an exception if the reservation does not exist.
+        /// </summary>
         [Test]
         public async Task CancelReservationAsync_ReservationNotFound_ThrowsException()
         {
@@ -69,6 +74,9 @@ namespace HotelReservationSystem.Tests
             _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never());
         }
 
+        /// <summary>
+        /// TC-CAN-003: Verify that it throws an exception if the reservation is not confirmed.
+        /// </summary>
         [Test]
         public async Task CancelReservationAsync_NotConfirmedReservation_ThrowsException()
         {
@@ -94,6 +102,9 @@ namespace HotelReservationSystem.Tests
             _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never());
         }
 
+        /// <summary>
+        /// TC-CAN-004: Verify that it throws an exception if the start date has already passed.
+        /// </summary>
         [Test]
         public async Task CancelReservationAsync_PastStartDate_ThrowsException()
         {
@@ -119,6 +130,9 @@ namespace HotelReservationSystem.Tests
             _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never());
         }
 
+        /// <summary>
+        /// TC-CAN-005: Verify that the room is not freed if there are other confirmed reservations.
+        /// </summary>
         [Test]
         public async Task CancelReservationAsync_HasOtherConfirmedReservations_DoesNotSetRoomAvailable()
         {
