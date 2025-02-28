@@ -35,7 +35,10 @@ namespace HotelReservationSystem.Core.Services
 
         public async Task<IEnumerable<Room>> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available)
         {
-            return await _roomRepository.SearchAsync(type, minPrice, maxPrice, available);
+            var rooms = await _roomRepository.SearchAsync(type, minPrice, maxPrice, available);
+
+            return rooms.Where(r => (!minPrice.HasValue || r.PricePerNight >= minPrice.Value)
+                                 && (!maxPrice.HasValue || r.PricePerNight <= maxPrice.Value));
         }
     }
 }
