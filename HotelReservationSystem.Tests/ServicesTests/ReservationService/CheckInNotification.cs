@@ -30,14 +30,13 @@ namespace HotelReservationSystem.Tests
         [Test]
         public async Task NotifyCheckInAsync_UpcomingReservations_SendsNotifications()
         {
-            // Arrange: Set up the test data with upcoming reservations
-            var currentDate = DateTime.UtcNow.Date; // Use UTC for consistency
+            var currentDate = DateTime.UtcNow.Date;
             var reservation1 = new Reservation
             {
                 Id = 1,
                 ClientId = 1,
                 RoomId = 1,
-                StartDate = currentDate.AddDays(1).ToUniversalTime(), // Tomorrow in UTC
+                StartDate = currentDate.AddDays(1).ToUniversalTime(), 
                 EndDate = currentDate.AddDays(3).ToUniversalTime(),
                 Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
@@ -46,22 +45,20 @@ namespace HotelReservationSystem.Tests
                 Id = 2,
                 ClientId = 2,
                 RoomId = 2,
-                StartDate = currentDate.AddDays(2).ToUniversalTime(), // In 2 days in UTC
+                StartDate = currentDate.AddDays(2).ToUniversalTime(), 
                 EndDate = currentDate.AddDays(4).ToUniversalTime(),
                 Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
             var upcomingReservations = new List<Reservation> { reservation1, reservation2 };
 
-            // Mock the repository to return upcoming reservations
             _reservationRepositoryMock.Setup(repo => repo.FindReservationsByStartDateRangeAsync(
                 It.Is<DateTime>(d => d == currentDate),
                 It.Is<DateTime>(d => d == currentDate.AddDays(2))))
                 .ReturnsAsync(upcomingReservations);
 
-            // Act: Call the method to send notifications
             var notifications = await _reservationService.NotifyCheckInAsync();
 
-            Assert.AreEqual(2, notifications.Count); // Two reservations should receive notifications
+            Assert.AreEqual(2, notifications.Count); 
             Assert.IsTrue(notifications[0].Contains($"reservation (ID: {reservation1.Id}) check-in is on {reservation1.StartDate.ToString("dd/MM/yyyy")}"));
             Assert.IsTrue(notifications[1].Contains($"reservation (ID: {reservation2.Id}) check-in is on {reservation2.StartDate.ToString("dd/MM/yyyy")}"));
         }
@@ -72,7 +69,7 @@ namespace HotelReservationSystem.Tests
         [Test]
         public async Task NotifyCheckInAsync_NoUpcomingReservations_ReturnsEmptyList()
         {
-            var currentDate = DateTime.UtcNow.Date; // Use UTC
+            var currentDate = DateTime.UtcNow.Date;
             var upcomingReservations = new List<Reservation>();
 
             _reservationRepositoryMock.Setup(repo => repo.FindReservationsByStartDateRangeAsync(
@@ -80,10 +77,8 @@ namespace HotelReservationSystem.Tests
                 It.Is<DateTime>(d => d == currentDate.AddDays(2))))
                 .ReturnsAsync(upcomingReservations);
 
-            // Act: Call the method to send notifications
             var notifications = await _reservationService.NotifyCheckInAsync();
 
-            // Assert: Verify the results
             Assert.IsEmpty(notifications); // No notifications should be sent
         }
 
@@ -93,14 +88,13 @@ namespace HotelReservationSystem.Tests
         [Test]
         public async Task NotifyCheckInAsync_NonConfirmedReservations_ExcludesFromNotifications()
         {
-            // Arrange: Set up the test with a mix of confirmed and canceled reservations
-            var currentDate = DateTime.UtcNow.Date; // Use UTC
+            var currentDate = DateTime.UtcNow.Date;
             var confirmedReservation = new Reservation
             {
                 Id = 1,
                 ClientId = 1,
                 RoomId = 1,
-                StartDate = currentDate.AddDays(1).ToUniversalTime(), // Tomorrow in UTC
+                StartDate = currentDate.AddDays(1).ToUniversalTime(),
                 EndDate = currentDate.AddDays(3).ToUniversalTime(),
                 Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
@@ -109,25 +103,21 @@ namespace HotelReservationSystem.Tests
                 Id = 2,
                 ClientId = 2,
                 RoomId = 2,
-                StartDate = currentDate.AddDays(1).ToUniversalTime(), // Tomorrow in UTC
+                StartDate = currentDate.AddDays(1).ToUniversalTime(), 
                 EndDate = currentDate.AddDays(3).ToUniversalTime(),
                 Status = Infrastructure.Data.Enum.ReservationStatus.Canceled
             };
             var reservations = new List<Reservation> { confirmedReservation, canceledReservation };
 
-            // Mock the repository to return both reservations
-            // Note: The repository method should filter out non-confirmed reservations
             _reservationRepositoryMock.Setup(repo => repo.FindReservationsByStartDateRangeAsync(
                 It.Is<DateTime>(d => d == currentDate),
                 It.Is<DateTime>(d => d == currentDate.AddDays(2))))
-                .ReturnsAsync(new List<Reservation> { confirmedReservation }); // Only confirmed reservations
+                .ReturnsAsync(new List<Reservation> { confirmedReservation }); 
 
-            // Act: Call the method to send notifications
             var notifications = await _reservationService.NotifyCheckInAsync();
 
-            // Assert: Verify the results
-            Assert.AreEqual(1, notifications.Count); // Only one notification should be sent (for the confirmed reservation)
-            Assert.IsTrue(notifications[0].Contains($"reservation (ID: {confirmedReservation.Id})")); // Only confirmed reservation is included
+            Assert.AreEqual(1, notifications.Count); 
+            Assert.IsTrue(notifications[0].Contains($"reservation (ID: {confirmedReservation.Id})"));
         }
     }
 }
