@@ -84,7 +84,7 @@ namespace HotelReservationSystem.Core.Services
 
         public async Task<List<string>> NotifyCheckInAsync()
         {
-            DateTime currentDate = DateTime.Now.Date;
+            DateTime currentDate = DateTime.UtcNow.Date;
             DateTime startRange = currentDate;
             DateTime endRange = currentDate.AddDays(2);
 
@@ -93,7 +93,7 @@ namespace HotelReservationSystem.Core.Services
             List<string> notifications = new List<string>();
             foreach (var reservation in upcomingReservations)
             {
-                string message = $"Notification: Dear Client {reservation.ClientId}, your reservation (ID: {reservation.Id}) check-in is on {reservation.StartDate.ToShortDateString()}. We look forward to welcoming you!";
+                string message = $"Notification: Dear Client {reservation.ClientId}, your reservation (ID: {reservation.Id}) check-in is on {reservation.StartDate.ToUniversalTime().ToString("dd/MM/yyyy")}. We look forward to welcoming you!";
                 notifications.Add(message);
             }
 
@@ -101,3 +101,4 @@ namespace HotelReservationSystem.Core.Services
         }
     }
 }
+
