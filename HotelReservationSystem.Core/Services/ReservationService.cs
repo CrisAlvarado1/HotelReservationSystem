@@ -1,10 +1,10 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using HotelReservationSystem.Infrastructure.Interfaces;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Core.Interfaces;
 using Npgsql.Internal;
-
 
 namespace HotelReservationSystem.Core.Services
 {
@@ -19,7 +19,6 @@ namespace HotelReservationSystem.Core.Services
                 _roomRepository = roomRepository;
             }
 
-        // En ReservationService.cs
         public async Task<Reservation> ReserveRoomAsync(Reservation reservation)
         {
             if (reservation == null)
@@ -43,12 +42,58 @@ namespace HotelReservationSystem.Core.Services
                     throw new InvalidOperationException("The room is not available for the selected dates.");
 
             reservation.Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed;
-
             var registeredReservation = await _reservationRepository.AddAsync(reservation);
 
             await _roomRepository.UpdateAvailabilityAsync(reservation.RoomId, false);
-
             return registeredReservation;
+        }
+
+        public async Task<IEnumerable<Reservation>> GetUserReservationHistoryAsync(int userId)
+        {
+            if (userId <= 0)
+                throw new ArgumentException("User ID must be greater than zero.", nameof(userId));
+
+            var reservations = await _reservationRepository.GetUserReservationHistoryAsync(userId);
+
+            if (reservations == null || !reservations.Any())
+                throw new KeyNotFoundException($"No reservations found for user ID {userId}.");
+
+            return reservations; 
+            
+        public async Task CancelReservationAsync(int reservationId)
+        {
+            var reservation = await _reservationRepository.FindByIdAsync(reservationId);
+
+            if (reservation == null)
+            {
+                throw new InvalidOperationException("Reservation not found.");
+            }
+
+            if (reservation.Status != HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed)
+            {
+                throw new InvalidOperationException("Only confirmed reservations can be canceled.");
+            }
+
+            if (reservation.StartDate < DateTime.Now.Date)
+            {
+                throw new InvalidOperationException("Cannot cancel a reservation that has already started or passed.");
+            }
+
+            reservation.Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Canceled;
+
+            await _reservationRepository.UpdateAsync(reservation);
+
+            bool hasOtherConfirmedReservation = await _reservationRepository.HasConfirmedReservationsAsync(
+                reservation.RoomId,
+                reservation.StartDate,
+                reservation.EndDate,
+                reservation.Id
+            );
+
+            if (!hasOtherConfirmedReservation)
+            {
+                await _roomRepository.UpdateAvailabilityAsync(reservation.RoomId, true);
+            }
         }
         public async Task<IEnumerable<Reservation>> ReservationHistoryAsync(int clienteId)
         {
