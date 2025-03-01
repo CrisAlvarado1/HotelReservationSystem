@@ -41,7 +41,20 @@ namespace HotelReservationSystem.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-<<<<<<< HEAD
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelReservationAsync(int id)
+        {
+            try
+            {
+                await _reservationService.CancelReservationAsync(id);
+
+                return Ok("Reservation canceled succesfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("user/{userId}/history")]
         public async Task<IActionResult> GetUserReservationHistoryAsync([FromRoute] int userId)
         {
@@ -58,33 +71,14 @@ namespace HotelReservationSystem.API.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message); 
+                return BadRequest(ex.Message);
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message); 
+                return NotFound(ex.Message);
 
             }
         }
     }
 }
-    
-=======
-
-        [HttpPut("{id}/cancel")]
-        public async Task<IActionResult> CancelReservationAsync(int id)
-        {
-            try
-            {
-                await _reservationService.CancelReservationAsync(id);
-
-                return Ok("Reservation canceled succesfully");
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-    }
->>>>>>> origin/master
 
