@@ -2,14 +2,12 @@
 using HotelReservationSystem.Core.Services;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Infrastructure.Interfaces;
-using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
+
 
 namespace HotelReservationSystem.Tests
 {
     [TestFixture]
-    public class CancelReservationServiceTests
+    public class CancelReservation
     {
         private Mock<IRoomRepository> _roomRepositoryMock;
         private Mock<IReservationRepository> _reservationRepositoryMock;
@@ -36,7 +34,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _reservationRepositoryMock.Setup(repo => repo.FindByIdAsync(reservationId))
@@ -50,7 +48,7 @@ namespace HotelReservationSystem.Tests
 
             await _reservationService.CancelReservationAsync(reservationId);
 
-            Assert.AreEqual(HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Canceled, reservation.Status);
+            Assert.AreEqual(Infrastructure.Data.Enum.ReservationStatus.Canceled, reservation.Status);
             _reservationRepositoryMock.Verify(repo => repo.UpdateAsync(reservation), Times.Once());
             _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(reservation.RoomId, true), Times.Once());
         }
@@ -88,7 +86,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Canceled
+                Status = Infrastructure.Data.Enum.ReservationStatus.Canceled
             };
 
             _reservationRepositoryMock.Setup(repo => repo.FindByIdAsync(reservationId))
@@ -116,7 +114,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(-1),
                 EndDate = DateTime.Now.AddDays(1),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _reservationRepositoryMock.Setup(repo => repo.FindByIdAsync(reservationId))
@@ -144,7 +142,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _reservationRepositoryMock.Setup(repo => repo.FindByIdAsync(reservationId))
@@ -158,7 +156,7 @@ namespace HotelReservationSystem.Tests
 
             await _reservationService.CancelReservationAsync(reservationId);
 
-            Assert.AreEqual(HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Canceled, reservation.Status);
+            Assert.AreEqual(Infrastructure.Data.Enum.ReservationStatus.Canceled, reservation.Status);
             _reservationRepositoryMock.Verify(repo => repo.UpdateAsync(reservation), Times.Once());
             _roomRepositoryMock.Verify(repo => repo.UpdateAvailabilityAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never());
         }

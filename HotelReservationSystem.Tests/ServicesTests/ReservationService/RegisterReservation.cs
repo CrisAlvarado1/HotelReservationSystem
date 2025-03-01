@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace HotelReservationSystem.Tests
 {
     [TestFixture]
-    public class ReservationServiceTests
+    public class RegisterReservation
     {
         private Mock<IRoomRepository> _roomRepositoryMock;
         private Mock<IReservationRepository> _reservationRepositoryMock;
@@ -35,7 +35,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(1), // Future date
                 EndDate = DateTime.Now.AddDays(3),   // Date after StartDate
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
@@ -50,7 +50,7 @@ namespace HotelReservationSystem.Tests
             Assert.IsNotNull(result); // We verify that the result is not null
             Assert.AreEqual(reservation.ClientId, result.ClientId); // Correct client
             Assert.AreEqual(reservation.RoomId, result.RoomId); // Correct room
-            Assert.AreEqual(HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed, result.Status); // Confirmed status
+            Assert.AreEqual(Infrastructure.Data.Enum.ReservationStatus.Confirmed, result.Status); // Confirmed status
 
             _roomRepositoryMock.Verify(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate), Times.Once); // Availability is checked
             _reservationRepositoryMock.Verify(repo => repo.AddAsync(It.Is<Reservation>(r => r.RoomId == 1)), Times.Once); // The reservation is added
@@ -71,7 +71,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
@@ -101,7 +101,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(-1), // Past date
                 EndDate = DateTime.Now.AddDays(3),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             // Act & Assert
@@ -147,7 +147,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(3), // Start date later than end date
                 EndDate = DateTime.Now.AddDays(1), 
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             // Act & Assert
@@ -174,7 +174,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 999, // Room ID that does not exist
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
@@ -204,7 +204,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 1,
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
@@ -234,7 +234,7 @@ namespace HotelReservationSystem.Tests
                 RoomId = 0, // Invalid RoomId
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(3),
-                Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed
+                Status = Infrastructure.Data.Enum.ReservationStatus.Confirmed
             };
 
             _roomRepositoryMock.Setup(repo => repo.IsRoomAvailable(reservation.RoomId, reservation.StartDate, reservation.EndDate))
