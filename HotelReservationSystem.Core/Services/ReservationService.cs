@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using HotelReservationSystem.Infrastructure.Interfaces;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Core.Interfaces;
+using Npgsql.Internal;
 
 
 namespace HotelReservationSystem.Core.Services
@@ -44,6 +45,18 @@ namespace HotelReservationSystem.Core.Services
             await _roomRepository.UpdateAvailabilityAsync(reservation.RoomId, false);
 
             return registeredReservation;
+        }
+        public async Task<IEnumerable<Reservation>> ReservationHistoryAsync(int clienteId)
+        {
+            if (clienteId <= 0)
+                throw new ArgumentException("User ID must be greater than zero.", nameof(clienteId));
+
+            var reservations = await _reservationRepository.GetUserReservationHistoryAsync(clienteId);
+
+            if (reservations == null || !reservations.Any())
+                throw new KeyNotFoundException($"No reservations found for user ID {clienteId}.");
+
+            return reservations;
         }
     }
 }
