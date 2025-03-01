@@ -27,6 +27,7 @@ namespace HotelReservationSystem.Infrastructure.Repositories
             return await _context.Rooms.FindAsync(id);
         }
 
+
         public async Task<IEnumerable<Room>> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available)
         {
             var query = _context.Rooms.AsQueryable();
@@ -49,6 +50,35 @@ namespace HotelReservationSystem.Infrastructure.Repositories
             }
 
             return await query.ToListAsync();
+
+        public async Task<bool> IsRoomAvailable(int roomId, DateTime startDate, DateTime endDate)
+        {
+            var room = await _context.Rooms
+                .Include(r => r.Reservas)
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+
+            if(room == null || !room.Available)
+            {
+                return false;
+            }
+
+            bool isOverlapping = room.Reservas.Any(reservation =>
+            reservation.Status == HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed &&
+            startDate < reservation.EndDate && endDate > reservation.StartDate);
+
+            return !isOverlapping;
+        }
+
+        public async Task UpdateAvailabilityAsync(int roomId, bool available)
+        {
+            var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == roomId);
+
+            if (room == null)
+                throw new InvalidOperationException($"Room with ID {roomId} not found.");
+
+            room.Available = available;
+
+            await _context.SaveChangesAsync();
         }
     }
 }
