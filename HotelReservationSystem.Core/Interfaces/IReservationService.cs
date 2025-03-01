@@ -7,6 +7,9 @@ namespace HotelReservationSystem.Core.Interfaces
     public interface IReservationService
     {
         Task<Reservation> ReserveRoomAsync(Reservation reservation);
+      
         Task<IEnumerable<Reservation>> GetUserReservationHistoryAsync(int userId);
+      
+        Task CancelReservationAsync(int reservationId);
     }
 }

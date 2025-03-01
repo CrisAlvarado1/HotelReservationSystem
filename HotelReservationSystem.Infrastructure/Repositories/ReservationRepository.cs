@@ -13,7 +13,7 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
         public ReservationRepository(HotelDbContext context)
         {
-            _context = context;
+            this._context = context;
         }
 
         public async Task<Reservation> AddAsync(Reservation reservation)
@@ -24,7 +24,7 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
             return reservation;
         }
-
+        
         public async Task<IEnumerable<Reservation>> GetUserReservationHistoryAsync(int clientId)
         {
             return await _context.Reservations
@@ -32,6 +32,26 @@ namespace HotelReservationSystem.Infrastructure.Repositories
                 .Where(r => r.ClientId == clientId)
                 .OrderByDescending(r => r.StartDate)
                 .ToListAsync();
+                
+        public async Task<Reservation> FindByIdAsync(int id)
+        {
+            return await _context.Reservations.FindAsync(id);
+        }
+
+        public async Task UpdateAsync(Reservation reservation)
+        {
+            _context.Reservations.Update(reservation);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> HasConfirmedReservationsAsync(int roomId, DateTime startDate, DateTime endDate, int? excludeReservationId = null)
+        {
+            return await _context.Reservations
+                .Where(r => r.RoomId == roomId &&
+                r.Status == HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed &&
+                (excludeReservationId == null || r.Id != excludeReservationId) &&
+                startDate < r.EndDate && endDate > r.StartDate).AnyAsync();
         }
     }
 }

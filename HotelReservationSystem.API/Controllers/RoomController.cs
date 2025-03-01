@@ -42,5 +42,19 @@ namespace HotelReservationSystem.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available)
+        {
+            try
+            {
+                var rooms = await _roomService.SearchAsync(type, minPrice, maxPrice, available);
+                return Ok(rooms);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
