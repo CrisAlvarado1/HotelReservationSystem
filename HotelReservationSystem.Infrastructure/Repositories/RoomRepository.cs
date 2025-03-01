@@ -50,11 +50,12 @@ namespace HotelReservationSystem.Infrastructure.Repositories
             }
 
             return await query.ToListAsync();
+        }
 
         public async Task<bool> IsRoomAvailable(int roomId, DateTime startDate, DateTime endDate)
         {
             var room = await _context.Rooms
-                .Include(r => r.Reservas)
+                .Include(r => r.Reservations)
                 .FirstOrDefaultAsync(r => r.Id == roomId);
 
             if(room == null || !room.Available)
@@ -62,7 +63,7 @@ namespace HotelReservationSystem.Infrastructure.Repositories
                 return false;
             }
 
-            bool isOverlapping = room.Reservas.Any(reservation =>
+            bool isOverlapping = room.Reservations.Any(reservation =>
             reservation.Status == HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed &&
             startDate < reservation.EndDate && endDate > reservation.StartDate);
 
