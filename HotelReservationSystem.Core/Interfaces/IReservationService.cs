@@ -6,5 +6,7 @@ namespace HotelReservationSystem.Core.Interfaces
     {
         Task<Reservation> ReserveRoomAsync(Reservation reservation);
 
+        Task CancelReservationAsync(int reservationId);
+
     }
 }
