@@ -1,13 +1,13 @@
-﻿using Moq;
+﻿using System.ComponentModel.DataAnnotations;
 using HotelReservationSystem.Core.Services;
-using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Infrastructure.Interfaces;
-using System.ComponentModel.DataAnnotations;
+using HotelReservationSystem.Infrastructure.Models;
+using Moq;
 
 namespace HotelReservationSystem.Tests;
 
 [TestFixture]
-public class RoomServiceTests
+public class RegisterRooms
 {
     private Mock<IRoomRepository> _roomRepositoryMock;
     private RoomService _roomService;

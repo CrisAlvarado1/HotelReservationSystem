@@ -32,5 +32,29 @@ namespace HotelReservationSystem.Core.Services
             var registeredRoom = await _roomRepository.AddAsync(room);
             return registeredRoom;
         }
+
+        public async Task<IEnumerable<Room>> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available)
+        {
+            ValidatePriceRange(minPrice, maxPrice);
+
+            var rooms = await _roomRepository.SearchAsync(type, minPrice, maxPrice, available);
+
+            return rooms.Where(r => (string.IsNullOrEmpty(type) || r.Type.Contains(type))
+                                 && (!minPrice.HasValue || r.PricePerNight >= minPrice.Value)
+                                 && (!maxPrice.HasValue || r.PricePerNight <= maxPrice.Value)
+                                 && (!available.HasValue || r.Available == available.Value));
+        }
+
+        private static void ValidatePriceRange(decimal? minPrice, decimal? maxPrice)
+        {
+            if (minPrice.HasValue && minPrice.Value < 0)
+                throw new ArgumentException("Invalid price range provided.");
+
+            if (maxPrice.HasValue && maxPrice.Value < 0)
+                throw new ArgumentException("Invalid price range provided.");
+
+            if (minPrice.HasValue && maxPrice.HasValue && minPrice.Value > maxPrice.Value)
+                throw new ArgumentException("Invalid price range provided.");
+        }
     }
 }
