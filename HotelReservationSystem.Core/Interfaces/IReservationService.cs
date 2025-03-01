@@ -8,5 +8,7 @@ namespace HotelReservationSystem.Core.Interfaces
 
         Task CancelReservationAsync(int reservationId);
 
+        Task<List<string>> NotifyCheckInAsync();
+
     }
 }
