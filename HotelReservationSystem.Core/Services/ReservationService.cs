@@ -1,9 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using HotelReservationSystem.Infrastructure.Interfaces;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Core.Interfaces;
-
 
 namespace HotelReservationSystem.Core.Services
 {
@@ -18,7 +18,6 @@ namespace HotelReservationSystem.Core.Services
             _roomRepository = roomRepository;
         }
 
-        // En ReservationService.cs
         public async Task<Reservation> ReserveRoomAsync(Reservation reservation)
         {
             if (reservation == null)
@@ -38,14 +37,24 @@ namespace HotelReservationSystem.Core.Services
                 throw new InvalidOperationException("The room is not available for the selected dates.");
 
             reservation.Status = HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed;
-
             var registeredReservation = await _reservationRepository.AddAsync(reservation);
 
             await _roomRepository.UpdateAvailabilityAsync(reservation.RoomId, false);
-
             return registeredReservation;
         }
 
+        public async Task<IEnumerable<Reservation>> GetUserReservationHistoryAsync(int userId)
+        {
+            if (userId <= 0)
+                throw new ArgumentException("User ID must be greater than zero.", nameof(userId));
+
+            var reservations = await _reservationRepository.GetUserReservationHistoryAsync(userId);
+
+            if (reservations == null || !reservations.Any())
+                throw new KeyNotFoundException($"No reservations found for user ID {userId}.");
+
+            return reservations; 
+            
         public async Task CancelReservationAsync(int reservationId)
         {
             var reservation = await _reservationRepository.FindByIdAsync(reservationId);
