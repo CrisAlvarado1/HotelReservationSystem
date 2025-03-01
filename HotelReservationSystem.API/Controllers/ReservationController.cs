@@ -56,6 +56,20 @@ namespace HotelReservationSystem.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("notify-checkin")]
+        public async Task<IActionResult> NotifyCheckInAsync()
+        {
+            try
+            {
+                var notifications = await _reservationService.NotifyCheckInAsync();
+                return Ok(notifications);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error sending check-in notifications: {ex.Message}");
+            }
+        }
     }
 
 }
