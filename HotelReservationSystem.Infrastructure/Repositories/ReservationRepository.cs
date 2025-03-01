@@ -24,15 +24,16 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
             return reservation;
         }
-        
-        public async Task<IEnumerable<Reservation>> GetUserReservationHistoryAsync(int clientId)
+
+        public async Task<IEnumerable<Reservation>> GetUserReservationHistoryAsync(int userId)
         {
             return await _context.Reservations
-                .Include(r => r.Room) 
-                .Where(r => r.ClientId == clientId)
+                .Include(r => r.Room)
+                .Where(r => r.ClientId == userId)
                 .OrderByDescending(r => r.StartDate)
                 .ToListAsync();
-                
+        }
+
         public async Task<Reservation> FindByIdAsync(int id)
         {
             return await _context.Reservations.FindAsync(id);

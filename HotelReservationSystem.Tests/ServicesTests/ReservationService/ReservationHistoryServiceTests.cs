@@ -58,7 +58,7 @@ namespace HotelReservationSystem.Tests.ServicesTests
         {
             int invalidUserId = -1;
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _reservationService.ReservationHistoryAsync(invalidUserId));
-            Assert.AreEqual("User ID must be greater than zero. (Parameter 'clienteId')", ex.Message);
+            Assert.AreEqual("User ID must be greater than zero. (Parameter 'userId')", ex.Message);
         }
 
         /// <summary>
