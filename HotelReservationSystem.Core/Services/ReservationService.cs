@@ -88,13 +88,30 @@ namespace HotelReservationSystem.Core.Services
             DateTime startRange = currentDate;
             DateTime endRange = currentDate.AddDays(2);
 
-            var upcomingReservations = await _reservationRepository.FindReservationsByStartDateRangeAsync(startRange, endRange);
+            var reservationsInRange = await _reservationRepository.FindReservationsByStartDateRangeAsync(startRange, endRange);
+
+            var reservationsToNotify = reservationsInRange.Where(r => !r.IsNotified).ToList();
+            var alreadyNotifiedReservations = reservationsInRange.Where(r => r.IsNotified).ToList();
+
+            if (reservationsToNotify.Count == 0 && alreadyNotifiedReservations.Count > 0)
+            {
+                var alreadyNotifiedIds = string.Join(", ", alreadyNotifiedReservations.Select(r => r.Id));
+                return new List<string> { $"All reservations in the date range ({startRange:dd/MM/yyyy} to {endRange:dd/MM/yyyy}) have already been notified. Reservation IDs: {alreadyNotifiedIds}" };
+            }
 
             List<string> notifications = new List<string>();
-            foreach (var reservation in upcomingReservations)
+            foreach (var reservation in reservationsToNotify)
             {
                 string message = $"Notification: Dear Client {reservation.ClientId}, your reservation (ID: {reservation.Id}) check-in is on {reservation.StartDate.ToUniversalTime().ToString("dd/MM/yyyy")}. We look forward to welcoming you!";
                 notifications.Add(message);
+
+                reservation.IsNotified = true;
+                await _reservationRepository.UpdateAsync(reservation);
+            }
+
+            if (notifications.Count == 0 && alreadyNotifiedReservations.Count == 0)
+            {
+                return new List<string> { $"No confirmed reservations found in the date range ({startRange:dd/MM/yyyy} to {endRange:dd/MM/yyyy})." };
             }
 
             return notifications;
