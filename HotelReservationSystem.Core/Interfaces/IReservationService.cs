@@ -9,7 +9,10 @@ namespace HotelReservationSystem.Core.Interfaces
         Task<Reservation> ReserveRoomAsync(Reservation reservation);
       
         Task<IEnumerable<Reservation>> ReservationHistoryAsync(int userId);
-      
+     
         Task CancelReservationAsync(int reservationId);
+
+        Task<List<string>> NotifyCheckInAsync();
+
     }
 }

@@ -41,6 +41,7 @@ namespace HotelReservationSystem.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        
         [HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelReservationAsync(int id)
         {
@@ -55,6 +56,7 @@ namespace HotelReservationSystem.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpGet("user/{userId}/history")]
         public async Task<IActionResult> GetUserReservationHistoryAsync([FromRoute] int userId)
         {
@@ -76,7 +78,20 @@ namespace HotelReservationSystem.API.Controllers
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
-
+            }
+        }
+        
+        [HttpPost("notify-checkin")]
+        public async Task<IActionResult> NotifyCheckInAsync()
+        {
+            try
+            {
+                var notifications = await _reservationService.NotifyCheckInAsync();
+                return Ok(notifications);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error sending check-in notifications: {ex.Message}");
             }
         }
     }

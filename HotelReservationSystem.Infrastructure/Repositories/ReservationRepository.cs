@@ -54,5 +54,13 @@ namespace HotelReservationSystem.Infrastructure.Repositories
                 (excludeReservationId == null || r.Id != excludeReservationId) &&
                 startDate < r.EndDate && endDate > r.StartDate).AnyAsync();
         }
+
+        public async Task<List<Reservation>> FindReservationsByStartDateRangeAsync(DateTime startRange, DateTime endRange)
+        {
+            return await _context.Reservations
+                .Where(r => r.StartDate >= startRange && r.StartDate <= endRange
+                         && r.Status == HotelReservationSystem.Infrastructure.Data.Enum.ReservationStatus.Confirmed)
+                .ToListAsync();
+        }
     }
 }

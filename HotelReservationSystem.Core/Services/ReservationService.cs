@@ -81,7 +81,8 @@ namespace HotelReservationSystem.Core.Services
             {
                 await _roomRepository.UpdateAvailabilityAsync(reservation.RoomId, true);
             }
-        }
+        }   
+
         public async Task<IEnumerable<Reservation>> ReservationHistoryAsync(int userId)
         {
             if (userId <= 0)
@@ -93,6 +94,41 @@ namespace HotelReservationSystem.Core.Services
                 throw new KeyNotFoundException($"No reservations found for user ID {userId}.");
 
             return reservations;
+        }
+        
+        public async Task<List<string>> NotifyCheckInAsync()
+        {
+            DateTime currentDate = DateTime.UtcNow.Date;
+            DateTime startRange = currentDate;
+            DateTime endRange = currentDate.AddDays(2);
+
+            var reservationsInRange = await _reservationRepository.FindReservationsByStartDateRangeAsync(startRange, endRange);
+
+            var reservationsToNotify = reservationsInRange.Where(r => !r.IsNotified).ToList();
+            var alreadyNotifiedReservations = reservationsInRange.Where(r => r.IsNotified).ToList();
+
+            if (reservationsToNotify.Count == 0 && alreadyNotifiedReservations.Count > 0)
+            {
+                var alreadyNotifiedIds = string.Join(", ", alreadyNotifiedReservations.Select(r => r.Id));
+                return new List<string> { $"All reservations in the date range ({startRange:dd/MM/yyyy} to {endRange:dd/MM/yyyy}) have already been notified. Reservation IDs: {alreadyNotifiedIds}" };
+            }
+
+            List<string> notifications = new List<string>();
+            foreach (var reservation in reservationsToNotify)
+            {
+                string message = $"Notification: Dear Client {reservation.ClientId}, your reservation (ID: {reservation.Id}) check-in is on {reservation.StartDate.ToUniversalTime().ToString("dd/MM/yyyy")}. We look forward to welcoming you!";
+                notifications.Add(message);
+
+                reservation.IsNotified = true;
+                await _reservationRepository.UpdateAsync(reservation);
+            }
+
+            if (notifications.Count == 0 && alreadyNotifiedReservations.Count == 0)
+            {
+                return new List<string> { $"No confirmed reservations found in the date range ({startRange:dd/MM/yyyy} to {endRange:dd/MM/yyyy})." };
+            }
+
+            return notifications;
         }
     }
 }

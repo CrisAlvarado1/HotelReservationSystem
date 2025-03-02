@@ -5,6 +5,7 @@ namespace HotelReservationSystem.Infrastructure.Interfaces
     public interface IReservationRepository
     {
         Task<Reservation> AddAsync(Reservation reservation);
+      
         Task<IEnumerable<Reservation>> GetUserReservationHistoryAsync(int userId);
 
         Task<Reservation> FindByIdAsync(int id);
@@ -13,5 +14,6 @@ namespace HotelReservationSystem.Infrastructure.Interfaces
 
         Task<bool> HasConfirmedReservationsAsync(int roomId, DateTime startDate, DateTime endDate, int? excludeReservationId = null);
 
+        Task<List<Reservation>> FindReservationsByStartDateRangeAsync(DateTime startRange, DateTime endRange);
     }
 }
