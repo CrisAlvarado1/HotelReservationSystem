@@ -2,6 +2,8 @@
 using HotelReservationSystem.Infrastructure.Interfaces;
 using HotelReservationSystem.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HotelReservationSystem.Infrastructure.Repositories
 {
@@ -21,6 +23,15 @@ namespace HotelReservationSystem.Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
             return reservation;
+        }
+
+        public async Task<IEnumerable<Reservation>> GetUserReservationHistoryAsync(int userId)
+        {
+            return await _context.Reservations
+                .Include(r => r.Room)
+                .Where(r => r.ClientId == userId)
+                .OrderByDescending(r => r.StartDate)
+                .ToListAsync();
         }
 
         public async Task<Reservation> FindByIdAsync(int id)

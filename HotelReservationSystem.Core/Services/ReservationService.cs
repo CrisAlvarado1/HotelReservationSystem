@@ -1,9 +1,10 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using HotelReservationSystem.Infrastructure.Interfaces;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Core.Interfaces;
-
+using Npgsql.Internal;
 
 namespace HotelReservationSystem.Core.Services
 {
@@ -80,8 +81,21 @@ namespace HotelReservationSystem.Core.Services
             {
                 await _roomRepository.UpdateAvailabilityAsync(reservation.RoomId, true);
             }
-        }
+        }   
 
+        public async Task<IEnumerable<Reservation>> ReservationHistoryAsync(int userId)
+        {
+            if (userId <= 0)
+                throw new ArgumentException("User ID must be greater than zero.", nameof(userId));
+
+            var reservations = await _reservationRepository.GetUserReservationHistoryAsync(userId);
+
+            if (reservations == null || !reservations.Any())
+                throw new KeyNotFoundException($"No reservations found for user ID {userId}.");
+
+            return reservations;
+        }
+        
         public async Task<List<string>> NotifyCheckInAsync()
         {
             DateTime currentDate = DateTime.UtcNow.Date;
