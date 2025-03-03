@@ -13,5 +13,7 @@ namespace HotelReservationSystem.Infrastructure.Interfaces
         Task<bool> IsRoomAvailable(int romId, DateTime startDate, DateTime endDate);
 
         Task UpdateAvailabilityAsync(int roomId, bool available);
+
+        Task<IEnumerable<Room>> CheckAvailabilityAsync(DateTime startDate, DateTime endDate);
     }
 }
