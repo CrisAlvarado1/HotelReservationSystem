@@ -86,4 +86,21 @@ public class CheckAvailability
         // Assert
         Assert.That(exception.Message, Is.EqualTo("Start date must be before end date."));
     }
+
+    /// <summary>
+    /// TC-CA-004 - Test to verify that an exception is thrown when startDate is in the past.
+    /// </summary>
+    [Test]
+    public async Task CheckAvailability_StartDateIsInPast_ShouldThrowsException()
+    {
+        // Arrange
+        var startDate = DateTime.Now.AddDays(-5);
+        var endDate = DateTime.Now.AddDays(1);
+
+        // Act & Assert
+        var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
+            await _roomService.CheckAvailabilityAsync(startDate, endDate));
+
+        Assert.That(exception.Message, Is.EqualTo("Start date must be today or in the future."));
+    }
 }
