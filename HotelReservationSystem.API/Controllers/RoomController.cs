@@ -56,5 +56,23 @@ namespace HotelReservationSystem.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("availability")]
+        public async Task<IActionResult> CheckAvailabilityAsync([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var availableRooms = await _roomService.CheckAvailabilityAsync(startDate, endDate);
+                return Ok(availableRooms);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
+            }
+        }
     }
 }
