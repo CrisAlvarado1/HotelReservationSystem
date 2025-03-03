@@ -82,7 +82,7 @@ namespace HotelReservationSystem.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Room>> CheckAvailabilityAsync(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate)
         {
             return await _context.Rooms
                     .Where(room => room.Available && !_context.Reservations

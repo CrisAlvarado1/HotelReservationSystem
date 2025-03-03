@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using HotelReservationSystem.Infrastructure.Models;
-using HotelReservationSystem.Infrastructure.Models.HotelReservationSystem.Infrastructure.Models;
 
 namespace HotelReservationSystem.Infrastructure.Data
 {
