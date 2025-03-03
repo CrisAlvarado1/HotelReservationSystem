@@ -103,4 +103,25 @@ public class CheckAvailability
 
         Assert.That(exception.Message, Is.EqualTo("Start date must be today or in the future."));
     }
+
+    /// <summary>
+    /// TC-CA-005 - Test to verify that an exception is thrown when a database failure occurs.
+    /// </summary>
+    [Test]
+    public async Task CheckAvailability_DatabaseFails_ShouldThrowsException()
+    {
+        // Arrange
+        var startDate = DateTime.Now.AddDays(1);
+        var endDate = DateTime.Now.AddDays(3);
+
+        _roomRepositoryMock.Setup(repo => repo.GetAvailableRoomsAsync(startDate, endDate))
+                       .ThrowsAsync(new Exception("Database connection failed."));
+
+        // Act & Assert
+        var exception = Assert.ThrowsAsync<Exception>(async () =>
+            await _roomService.CheckAvailabilityAsync(startDate, endDate));
+
+        // Assert
+        Assert.That(exception.Message, Is.EqualTo("Database connection failed."));
+    }
 }
