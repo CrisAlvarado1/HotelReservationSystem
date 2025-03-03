@@ -30,7 +30,7 @@ namespace HotelReservationSystem.Infrastructure.Repositories
                 throw new ArgumentException("Reservation ID must be greater than zero.", nameof(reservationId));
 
             var invoice = await _context.Invoices
-                .SingleOrDefaultAsync(i => i.ReservationId == reservationId);
+                .FirstOrDefaultAsync(i => i.ReservationId == reservationId);
 
             if (invoice == null)
                 throw new InvalidOperationException($"No invoice found for reservation ID {reservationId}.");

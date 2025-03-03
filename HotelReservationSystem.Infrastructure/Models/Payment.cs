@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using HotelReservationSystem.Infrastructure.Data.Enum;
-using HotelReservationSystem.Infrastructure.Models.HotelReservationSystem.Infrastructure.Models;
+using HotelReservationSystem.Infrastructure.Models;
 
 namespace HotelReservationSystem.Infrastructure.Models
 {
