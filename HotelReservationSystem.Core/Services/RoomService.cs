@@ -56,5 +56,15 @@ namespace HotelReservationSystem.Core.Services
             if (minPrice.HasValue && maxPrice.HasValue && minPrice.Value > maxPrice.Value)
                 throw new ArgumentException("Invalid price range provided.");
         }
+
+        public async Task<IEnumerable<Room>> CheckAvailabilityAsync(DateTime startDate, DateTime endDate)
+        {
+            if (startDate >= endDate)
+                throw new ArgumentException("Start date must be before end date.");
+
+            var rooms = await _roomRepository.GetAvailableRoomsAsync(startDate, endDate);
+
+            return rooms ?? new List<Room>();
+        }
     }
 }
