@@ -19,7 +19,7 @@ public class CheckAvailability
     }
 
     /// <summary>
-    /// TC-SH-001 - Test to verify that the check availability method returns available rooms.
+    /// TC-CA-001 - Test to verify that the check availability method returns available rooms.
     /// </summary>
     [Test]
     public async Task CheckAvailability_DatesAreValid_ShouldReturnsAvailableRooms()
@@ -48,6 +48,9 @@ public class CheckAvailability
         _roomRepositoryMock.Verify(repo => repo.GetAvailableRoomsAsync(startDate, endDate), Times.Once);
     }
 
+    /// <summary>
+    /// TC-CA-002 - Test to verify that the check availability method returns an empty list when no rooms are available.
+    /// </summary>
     [Test]
     public async Task CheckAvailability_NoRoomsAvailable_ShouldReturnsEmptyList()
     {
@@ -64,5 +67,23 @@ public class CheckAvailability
         Assert.That(result, Is.Not.Null, "The result should not be null.");
         Assert.That(result, Is.Empty, "The result should be an empty list.");
         _roomRepositoryMock.Verify(repo => repo.GetAvailableRoomsAsync(startDate, endDate), Times.Once);
+    }
+
+    /// <summary>
+    /// TC-CA-003 - Test to verify that an exception is thrown when startDate is after endDate.
+    /// </summary>
+    [Test]
+    public async Task CheckAvailability_StartDateIsAfterEndDate_ShouldThrowsException()
+    {
+        // Arrange
+        var startDate = DateTime.Now.AddDays(5);
+        var endDate = DateTime.Now.AddDays(3);
+
+        // Act & Assert
+        var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
+            await _roomService.CheckAvailabilityAsync(startDate, endDate));
+
+        // Assert
+        Assert.That(exception.Message, Is.EqualTo("Start date must be before end date."));
     }
 }
