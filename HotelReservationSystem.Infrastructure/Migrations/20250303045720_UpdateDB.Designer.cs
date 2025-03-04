@@ -3,6 +3,7 @@ using System;
 using HotelReservationSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HotelReservationSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    partial class HotelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250303045720_UpdateDB")]
+    partial class UpdateDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,7 @@ namespace HotelReservationSystem.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
             modelBuilder.Entity("HotelReservationSystem.Infrastructure.Models.HotelReservationSystem.Infrastructure.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -49,6 +53,32 @@ namespace HotelReservationSystem.Infrastructure.Migrations
                     b.HasIndex("ReservationId");
 
                     b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("HotelReservationSystem.Infrastructure.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("SentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("HotelReservationSystem.Infrastructure.Models.Payment", b =>
@@ -91,9 +121,6 @@ namespace HotelReservationSystem.Infrastructure.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsNotified")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("RoomId")
                         .HasColumnType("integer");
@@ -184,6 +211,17 @@ namespace HotelReservationSystem.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("HotelReservationSystem.Infrastructure.Models.Notification", b =>
+                {
+                    b.HasOne("HotelReservationSystem.Infrastructure.Models.User", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("HotelReservationSystem.Infrastructure.Models.Payment", b =>

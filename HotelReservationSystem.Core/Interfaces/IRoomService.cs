@@ -7,5 +7,7 @@ namespace HotelReservationSystem.Core.Interfaces
         Task<Room> RegisterRoomAsync(Room room);
 
         Task<IEnumerable<Room>> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available);
+
+        Task<IEnumerable<Room>> CheckAvailabilityAsync(DateTime startDate, DateTime endDate);
     }
 }

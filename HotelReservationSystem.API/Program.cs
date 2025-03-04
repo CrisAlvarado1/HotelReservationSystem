@@ -37,12 +37,20 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+
+builder.Services.AddScoped<IOccupancyReportRepository, OccupancyReportRepository>();
+
 // Register Services
 builder.Services.AddScoped<IRoomService, RoomService>();
 
 builder.Services.AddScoped<IReservationService, ReservationService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+
+builder.Services.AddScoped<IOccupancyReportService, OccupancyReportService>();
 
 var app = builder.Build();
 
