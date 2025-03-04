@@ -5,21 +5,21 @@ using HotelReservationSystem.Infrastructure.Models;
 using Moq;
 
 
-namespace HotelReservationSystem.Tests
+namespace HotelReservationSystem.Tests.ServicesTests.InvoiceService
 {
     [TestFixture]
-    public class InvoiceServiceTests
+    public class InvoiceService
     {
         private Mock<IReservationRepository> _reservationRepositoryMock;
         private Mock<IInvoiceRepository> _invoiceRepositoryMock;
-        private InvoiceService _invoiceService;
+        private Core.Services.InvoiceService _invoiceService;
 
         [SetUp]
         public void Setup()
         {
             _reservationRepositoryMock = new Mock<IReservationRepository>();
             _invoiceRepositoryMock = new Mock<IInvoiceRepository>();
-            _invoiceService = new InvoiceService(_reservationRepositoryMock.Object, _invoiceRepositoryMock.Object);
+            _invoiceService = new Core.Services.InvoiceService(_reservationRepositoryMock.Object, _invoiceRepositoryMock.Object);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace HotelReservationSystem.Tests
 
             // Assert
             Assert.AreEqual(300, result.TotalAmount);
-       
+
         }
     }
 }

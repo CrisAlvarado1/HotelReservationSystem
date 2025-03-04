@@ -23,8 +23,15 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
         public async Task<Invoice> GetByReservationIdAsync(int reservationId)
         {
-            return await _context.Invoices
-                .FirstOrDefaultAsync(i => i.ReservationId == reservationId);
+            var invoice = await _context.Invoices
+                                        .FirstOrDefaultAsync(i => i.ReservationId == reservationId);
+
+            if (invoice == null)
+            {
+                throw new InvalidOperationException($"No invoice found for reservation ID {reservationId}.");
+            }
+
+            return invoice;
         }
     }
 }

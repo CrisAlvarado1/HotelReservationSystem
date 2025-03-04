@@ -18,8 +18,7 @@ namespace HotelReservationSystem.Infrastructure.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
         }
-
-        
+  
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         
