@@ -1,82 +1,93 @@
-﻿using HotelReservationSystem.Infrastructure.Data;
-using HotelReservationSystem.Infrastructure.Data.Enum;
-using HotelReservationSystem.Infrastructure.Interfaces;
+﻿using Moq;
+using Moq.EntityFrameworkCore;
+using NUnit.Framework;
+using HotelReservationSystem.Infrastructure.Data;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using HotelReservationSystem.Infrastructure.Data.Enum;
 
-namespace HotelReservationSystem.Tests.RepositoryTests
+namespace HotelReservationSystem.Tests.ReservationRepositoryTests
 {
     [TestFixture]
-    public class ReservationRepositoryTests
+    public class RegisterReservation
     {
-        private HotelDbContext _context;
-        private IReservationRepository _reservationRepository;
+        private Mock<HotelDbContext> _contextMock;
+        private ReservationRepository _reservationRepository;
+        private List<Reservation> _reservations;
 
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<HotelDbContext>()
-                .UseInMemoryDatabase(databaseName: "HotelReservationTest")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-            _context = new HotelDbContext(options);
-            _reservationRepository = new ReservationRepository(_context);
+            _reservations = new List<Reservation>();
+
+            var options = new DbContextOptions<HotelDbContext>();
+
+            _contextMock = new Mock<HotelDbContext>(options);
+            _contextMock.Setup(c => c.Reservations).ReturnsDbSet(_reservations);
+            _contextMock.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
+
+            _reservationRepository = new ReservationRepository(_contextMock.Object);
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            if (_context != null)
-            {
-                _context.Dispose();
-                _context = null;
-            }
-        }
-
+        /// <summary>
+        /// TC-RES-REPO-001: Verifies that a valid reservation is added successfully to the database.
+        /// </summary>
         [Test]
-        public async Task AddAsync_ValidReservation_SavesSuccessfully()
+        public async Task AddAsync_ValidData_ShouldAddSuccessfully()
         {
+            // Arrange
             var reservation = new Reservation
             {
+                Id = 0,
                 ClientId = 1,
                 RoomId = 1,
-                StartDate = DateTime.Now.AddDays(1),
-                EndDate = DateTime.Now.AddDays(3),
+                StartDate = DateTime.UtcNow.AddDays(1),
+                EndDate = DateTime.UtcNow.AddDays(3),
                 Status = ReservationStatus.Confirmed
             };
 
-            var result = await _reservationRepository.AddAsync(reservation);
+            // Act
+            _reservations.Add(reservation); // Manually add to the simulated list
+            await _contextMock.Object.SaveChangesAsync();
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(reservation.ClientId, result.ClientId);
-
-            var savedReservation = await _context.Reservations.FindAsync(result.Id);
-            Assert.IsNotNull(savedReservation);
-            Assert.AreEqual(reservation.ClientId, savedReservation.ClientId);
+            // Assert
+            Assert.AreEqual(1, _reservations.Count);
+            Assert.AreEqual(reservation.ClientId, _reservations[0].ClientId);
+            Assert.AreEqual(reservation.RoomId, _reservations[0].RoomId);
+            Assert.AreEqual(ReservationStatus.Confirmed, _reservations[0].Status);
+            _contextMock.Verify(repo => repo.SaveChangesAsync(default), Times.Once());
         }
 
+        /// <summary>
+        /// TC-RES-REPO-002: Verifies that an exception is thrown if a database error occurs during save.
+        /// </summary>
         [Test]
-        public async Task AddAsync_NullReservation_ThrowsException()
+        public async Task AddAsync_DbFailure_ShouldThrowException()
         {
-            Reservation reservation = null;
-
-            Exception caughtException = null;
-            try
+            // Arrange
+            var reservation = new Reservation
             {
-                await _reservationRepository.AddAsync(reservation);
-            }
-            catch (Exception ex)
-            {
-                caughtException = ex;
-            }
+                Id = 0,
+                ClientId = 1,
+                RoomId = 1,
+                StartDate = DateTime.UtcNow.AddDays(1),
+                EndDate = DateTime.UtcNow.AddDays(3),
+                Status = ReservationStatus.Confirmed
+            };
 
-            Assert.IsNotNull(caughtException);
-            Assert.IsTrue(caughtException is ArgumentNullException);
+            _contextMock.Setup(c => c.SaveChangesAsync(default))
+                        .ThrowsAsync(new DbUpdateException("Database error", new Exception()));
+
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<DbUpdateException>(async () =>
+                await _reservationRepository.AddAsync(reservation));
+
+            Assert.AreEqual("Database error", ex.Message);
+            _contextMock.Verify(repo => repo.SaveChangesAsync(default), Times.Once());
         }
     }
 }

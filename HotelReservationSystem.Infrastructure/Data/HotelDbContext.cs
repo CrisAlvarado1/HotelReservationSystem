@@ -19,8 +19,10 @@ namespace HotelReservationSystem.Infrastructure.Data
                 .IsUnique();
         }
 
+        
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
+        
         public virtual DbSet<Reservation> Reservations { get; set; }
         public virtual DbSet<Room> Rooms { get; set; }
     }
