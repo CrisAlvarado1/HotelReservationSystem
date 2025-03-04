@@ -36,7 +36,9 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
         public async Task<Reservation> FindByIdAsync(int id)
         {
-            return await _context.Reservations.FindAsync(id);
+            return await _context.Reservations
+                .Include(r => r.Room)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task UpdateAsync(Reservation reservation)
