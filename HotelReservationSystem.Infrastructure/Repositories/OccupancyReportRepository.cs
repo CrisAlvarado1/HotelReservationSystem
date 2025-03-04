@@ -20,6 +20,11 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
         public async Task<Dictionary<string, double>> GetOccupancyRateAsync(DateTime startDate, DateTime endDate)
         {
+            if (!await _context.Rooms.AnyAsync())
+            {
+                throw new InvalidOperationException("No rooms found in the system.");
+            }
+
             var reservations = await _context.Reservations
                 .Where(r => r.StartDate < endDate && r.EndDate > startDate)
                 .Join(_context.Rooms,

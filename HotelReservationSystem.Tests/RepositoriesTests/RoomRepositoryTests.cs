@@ -42,7 +42,7 @@ public class RoomRepositoryTests
     }
 
     /// <summary>
-    /// TC-CD-REPO-001 - Test to check if the GetAvailableRoomsAsync method returns the available rooms.
+    /// TC-CA-REPO-001 - Test to check if the GetAvailableRoomsAsync method returns the available rooms.
     /// </summary>
     [Test]
     public async Task GetAvailableRoomsAsync_RoomsAreFree_ShouldReturnsAvailableRoom()
@@ -62,6 +62,9 @@ public class RoomRepositoryTests
         Assert.IsFalse(availableRooms.Any(r => r.Id == 2), "Room 2 should not be available as it is reserved.");
     }
 
+    /// <summary>
+    /// TC-CA-REPO-001 - Test to check if the GetAvailableRoomsAsync method returns an empty list when all rooms are reserved.
+    /// </summary>
     [Test]
     public async Task GetAvailableRoomsAsync_AllRoomsReserved_ShouldReturnsEmptyList()
     {
