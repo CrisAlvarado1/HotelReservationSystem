@@ -19,7 +19,7 @@ public class SearchRooms
     }
 
     /// <summary>
-    /// TC-SH-006 - Test to verify that the search method returns rooms of a specific type.
+    /// TC-SH-001 - Test to verify that the search method returns rooms of a specific type.
     /// </summary>
     [Test]
     public async Task SearchRooms_ByType_ShouldReturnsMatchingRooms()
@@ -48,7 +48,7 @@ public class SearchRooms
     }
 
     /// <summary>
-    ///  TC-SH-007 - Test to verify that the search method returns rooms within a specific price range.
+    ///  TC-SH-002 - Test to verify that the search method returns rooms within a specific price range.
     /// </summary>
     [Test]
     public async Task SearchRooms_ByPriceRange_ShouldReturnsMatchingRoom()
@@ -80,7 +80,7 @@ public class SearchRooms
     }
 
     /// <summary>
-    /// TC-SH-008 - Test to verify that the search method returns available rooms.
+    /// TC-SH-003 - Test to verify that the search method returns available rooms.
     /// </summary>
     [Test]
     public async Task SearchRooms_ByAvailability_ShouldReturnsAvailableRooms()
@@ -112,7 +112,7 @@ public class SearchRooms
     }
 
     /// <summary>
-    /// TC-SH-009 - Test to verify that an exception is thrown when invalid price range values are provided.
+    /// TC-SH-004 - Test to verify that an exception is thrown when invalid price range values are provided.
     /// </summary>
     [Test]
     [TestCase(-10.00, 200.00)]
@@ -133,7 +133,7 @@ public class SearchRooms
     }
 
     /// <summary>
-    /// TC-SH-010 - Test to verify that an empty list is returned when no rooms match the search criteria.
+    /// TC-SH-005 - Test to verify that an empty list is returned when no rooms match the search criteria.
     /// </summary>
     [Test]
     public async Task SearchRooms_EmptyResult_ShouldReturnsEmptyList()
