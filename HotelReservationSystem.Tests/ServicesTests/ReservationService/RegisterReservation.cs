@@ -4,7 +4,7 @@ using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Infrastructure.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace HotelReservationSystem.Tests
+namespace HotelReservationSystem.Tests.ServicesTests
 {
     [TestFixture]
     public class RegisterReservation

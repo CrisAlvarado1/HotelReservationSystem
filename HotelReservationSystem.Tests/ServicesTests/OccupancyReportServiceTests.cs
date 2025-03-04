@@ -2,7 +2,7 @@
 using HotelReservationSystem.Infrastructure.Interfaces;
 using Moq;
 
-namespace HotelReservationSystem.Tests;
+namespace HotelReservationSystem.Tests.ServicesTests;
 
 public class OccupancyReportServiceTests
 {

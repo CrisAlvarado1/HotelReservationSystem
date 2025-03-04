@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Moq.EntityFrameworkCore;
 
-namespace HotelReservationSystem.Tests;
+namespace HotelReservationSystem.Tests.RepositoriesTests;
 
 [TestFixture]
 public class OccupancyReportRepositoryTests

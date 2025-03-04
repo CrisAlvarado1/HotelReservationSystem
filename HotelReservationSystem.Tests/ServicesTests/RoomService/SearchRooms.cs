@@ -3,7 +3,7 @@ using HotelReservationSystem.Infrastructure.Interfaces;
 using HotelReservationSystem.Infrastructure.Models;
 using Moq;
 
-namespace HotelReservationSystem.Tests;
+namespace HotelReservationSystem.Tests.ServicesTests;
 
 [TestFixture]
 public class SearchRooms

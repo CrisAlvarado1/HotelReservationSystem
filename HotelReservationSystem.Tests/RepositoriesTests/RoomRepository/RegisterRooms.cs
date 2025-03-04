@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotelReservationSystem.Tests.RoomRepositoryTests
+namespace HotelReservationSystem.Tests.RepositoriesTests
 {
     [TestFixture]
     public class RegisterRooms

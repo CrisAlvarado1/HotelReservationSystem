@@ -7,7 +7,7 @@ using HotelReservationSystem.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using HotelReservationSystem.Infrastructure.Data.Enum;
 
-namespace HotelReservationSystem.Tests.UserRepositoryTests
+namespace HotelReservationSystem.Tests.RepositoriesTests
 {
     [TestFixture]
     public class RegisterClients
@@ -19,15 +19,15 @@ namespace HotelReservationSystem.Tests.UserRepositoryTests
         [SetUp]
         public void Setup()
         {
-           
+
             _users = new List<User>();
 
-          
+
             var options = new DbContextOptions<HotelDbContext>();
 
-            
+
             _contextMock = new Mock<HotelDbContext>(options);
-            _contextMock.Setup(c => c.Users).ReturnsDbSet(_users); 
+            _contextMock.Setup(c => c.Users).ReturnsDbSet(_users);
             _contextMock.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
             _userRepository = new UserRepository(_contextMock.Object);
         }
@@ -50,7 +50,7 @@ namespace HotelReservationSystem.Tests.UserRepositoryTests
             };
 
             // Act
-            _users.Add(user); 
+            _users.Add(user);
             await _contextMock.Object.SaveChangesAsync();
 
             // Assert

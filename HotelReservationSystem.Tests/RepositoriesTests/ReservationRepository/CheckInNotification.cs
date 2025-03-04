@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotelReservationSystem.Tests.ReservationRepositoryTests
+namespace HotelReservationSystem.Tests.RepositoriesTests
 {
     [TestFixture]
     public class CheckInNotification

@@ -5,7 +5,7 @@ using Moq;
 using HotelReservationSystem.Core.Services;
 using HotelReservationSystem.Infrastructure.Data.Enum;
 
-namespace HotelReservationSystem.Tests
+namespace HotelReservationSystem.Tests.ServicesTests
 {
     [TestFixture]
     public class UserServiceTests

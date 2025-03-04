@@ -1,15 +1,13 @@
 ﻿using HotelReservationSystem.Infrastructure.Data;
-using HotelReservationSystem.Infrastructure.Interfaces;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Moq.EntityFrameworkCore;
 
-namespace HotelReservationSystem.Tests;
+namespace HotelReservationSystem.Tests.RepositoriesTests;
 
-[TestFixture]
-public class RoomRepositoryTests
+public class CheckAvailability
 {
     private Mock<HotelDbContext> _contextMock;
     private RoomRepository _roomRepository;

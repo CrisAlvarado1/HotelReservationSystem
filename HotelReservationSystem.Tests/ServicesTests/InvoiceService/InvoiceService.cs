@@ -5,7 +5,7 @@ using HotelReservationSystem.Infrastructure.Models;
 using Moq;
 
 
-namespace HotelReservationSystem.Tests.ServicesTests.InvoiceService
+namespace HotelReservationSystem.Tests.ServicesTests
 {
     [TestFixture]
     public class InvoiceService
