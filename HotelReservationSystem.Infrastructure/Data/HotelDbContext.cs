@@ -10,7 +10,7 @@ namespace HotelReservationSystem.Infrastructure.Data
         {
         }
 
-        public DbSet<User> Users { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,9 +19,9 @@ namespace HotelReservationSystem.Infrastructure.Data
                 .IsUnique();
         }
 
-        public DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
+        public  virtual DbSet<Reservation> Reservations { get; set; }
         public DbSet<Room> Rooms { get; set; }
     }
 }
