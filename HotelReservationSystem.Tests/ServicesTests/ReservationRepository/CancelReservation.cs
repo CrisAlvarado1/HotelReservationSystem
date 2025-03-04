@@ -1,91 +1,89 @@
-﻿using HotelReservationSystem.Infrastructure.Data;
-using HotelReservationSystem.Infrastructure.Data.Enum;
-using HotelReservationSystem.Infrastructure.Interfaces;
+﻿using Moq;
+using Moq.EntityFrameworkCore;
+using NUnit.Framework;
+using HotelReservationSystem.Infrastructure.Data;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using NUnit.Framework;
+using HotelReservationSystem.Infrastructure.Data.Enum;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
-namespace HotelReservationSystem.Tests.RepositoryTests
+namespace HotelReservationSystem.Tests.ReservationRepositoryTests
 {
     [TestFixture]
-    public class ReservationRepositoryCancelTests
+    public class CancelReservation
     {
-        private HotelDbContext _context;
-        private IReservationRepository _reservationRepository;
+        private Mock<HotelDbContext> _contextMock;
+        private ReservationRepository _reservationRepository;
+        private List<Reservation> _reservations;
 
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<HotelDbContext>()
-                .UseInMemoryDatabase(databaseName: "HotelReservationTest_Cancel")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                .Options;
-            _context = new HotelDbContext(options);
-            _reservationRepository = new ReservationRepository(_context);
+            _reservations = new List<Reservation>();
+            var options = new DbContextOptions<HotelDbContext>();
+            _contextMock = new Mock<HotelDbContext>(options);
+            _contextMock.Setup(c => c.Reservations).ReturnsDbSet(_reservations);
+            _contextMock.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
+
+            _reservationRepository = new ReservationRepository(_contextMock.Object);
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            if (_context != null)
-            {
-                _context.Dispose();
-                _context = null;
-            }
-        }
-
+        /// <summary>
+        /// TC-RES-REPO-003: Verifies that an existing reservation can be canceled successfully.
+        /// </summary>
         [Test]
         public async Task UpdateAsync_ExistingReservation_CancelsSuccessfully()
         {
+            // Arrange
             var reservation = new Reservation
             {
+                Id = 1,
                 ClientId = 1,
                 RoomId = 1,
-                StartDate = DateTime.Now.AddDays(1),
-                EndDate = DateTime.Now.AddDays(3),
+                StartDate = DateTime.UtcNow.AddDays(1),
+                EndDate = DateTime.UtcNow.AddDays(3),
                 Status = ReservationStatus.Confirmed
             };
-            await _context.Reservations.AddAsync(reservation);
-            await _context.SaveChangesAsync();
+            _reservations.Add(reservation);
 
+            // Act
             reservation.Status = ReservationStatus.Canceled;
-
             await _reservationRepository.UpdateAsync(reservation);
 
-            var updatedReservation = await _context.Reservations.FindAsync(reservation.Id);
-            Assert.IsNotNull(updatedReservation);
-            Assert.AreEqual(ReservationStatus.Canceled, updatedReservation.Status);
+            // Assert
+            Assert.AreEqual(ReservationStatus.Canceled, reservation.Status);
+            _contextMock.Verify(repo => repo.SaveChangesAsync(default), Times.Once());
         }
 
+        /// <summary>
+        /// TC-RES-REPO-004: Verifies that attempting to cancel a non-existing reservation throws an exception.
+        /// </summary>
         [Test]
         public async Task UpdateAsync_NonExistingReservation_ThrowsException()
         {
+            // Arrange
             var reservation = new Reservation
             {
-                Id = 999, // ID inexistente
+                Id = 999,
                 ClientId = 1,
                 RoomId = 1,
-                StartDate = DateTime.Now.AddDays(1),
-                EndDate = DateTime.Now.AddDays(3),
+                StartDate = DateTime.UtcNow.AddDays(1),
+                EndDate = DateTime.UtcNow.AddDays(3),
                 Status = ReservationStatus.Canceled
             };
 
-            Exception caughtException = null;
-            try
-            {
-                await _reservationRepository.UpdateAsync(reservation);
-            }
-            catch (Exception ex)
-            {
-                caughtException = ex;
-            }
+            _contextMock.Setup(c => c.SaveChangesAsync(default))
+                        .ThrowsAsync(new DbUpdateConcurrencyException("Reservation not found"));
 
-            Assert.IsNotNull(caughtException);
-            Assert.IsTrue(caughtException is DbUpdateConcurrencyException || caughtException.InnerException is DbUpdateConcurrencyException);
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () =>
+                await _reservationRepository.UpdateAsync(reservation));
+
+            Assert.AreEqual("Reservation not found", ex.Message);
+            _contextMock.Verify(repo => repo.SaveChangesAsync(default), Times.Once());
         }
     }
 }

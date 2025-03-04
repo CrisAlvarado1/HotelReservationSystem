@@ -28,7 +28,7 @@ namespace HotelReservationSystem.Infrastructure.Repositories
         }
 
 
-        public async Task<IEnumerable<Room>> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available)
+        public Task<IEnumerable<Room>> SearchAsync(string? type, decimal? minPrice, decimal? maxPrice, bool? available)
         {
             var query = _context.Rooms.AsQueryable();
 
@@ -49,7 +49,8 @@ namespace HotelReservationSystem.Infrastructure.Repositories
                 query = query.Where(r => r.Available == available.Value);
             }
 
-            return await query.ToListAsync();
+            // Cambiado de ToListAsync a ToList, envuelto en Task.FromResult
+            return Task.FromResult<IEnumerable<Room>>(query.ToList());
         }
 
         public async Task<bool> IsRoomAvailable(int roomId, DateTime startDate, DateTime endDate)
@@ -80,6 +81,16 @@ namespace HotelReservationSystem.Infrastructure.Repositories
             room.Available = available;
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _context.Rooms
+                    .Where(room => room.Available && !_context.Reservations
+                        .Any(reservation => reservation.RoomId == room.Id &&
+                                reservation.StartDate < endDate &&
+                                reservation.EndDate > startDate))
+                    .ToListAsync();
         }
     }
 }
