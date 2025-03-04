@@ -21,7 +21,7 @@ namespace HotelReservationSystem.Infrastructure.Data
 
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<Room> Rooms { get; set; }
+        public virtual DbSet<Reservation> Reservations { get; set; }
+        public virtual DbSet<Room> Rooms { get; set; }
     }
 }
