@@ -16,9 +16,6 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
         public async Task<Invoice> AddAsync(Invoice invoice)
         {
-            if (invoice == null)
-                throw new ArgumentNullException(nameof(invoice), "The invoice cannot be null.");
-
             await _context.Invoices.AddAsync(invoice);
             await _context.SaveChangesAsync();
             return invoice;
@@ -26,16 +23,8 @@ namespace HotelReservationSystem.Infrastructure.Repositories
 
         public async Task<Invoice> GetByReservationIdAsync(int reservationId)
         {
-            if (reservationId <= 0)
-                throw new ArgumentException("Reservation ID must be greater than zero.", nameof(reservationId));
-
-            var invoice = await _context.Invoices
+            return await _context.Invoices
                 .FirstOrDefaultAsync(i => i.ReservationId == reservationId);
-
-            if (invoice == null)
-                throw new InvalidOperationException($"No invoice found for reservation ID {reservationId}.");
-
-            return invoice;
         }
     }
 }

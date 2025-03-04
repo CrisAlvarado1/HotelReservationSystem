@@ -185,62 +185,7 @@ namespace HotelReservationSystem.Tests
 
             // Assert
             Assert.AreEqual(300, result.TotalAmount);
-        }
-
-        /// <summary>
-        /// TC-IS-007 - Test to verify that an ArgumentNullException is thrown when the invoice is null.
-        /// </summary>
-        [Test]
-        public void AddAsync_NullInvoice_ThrowsArgumentNullException()
-        {
-            // Arrange
-            Invoice nullInvoice = null;
-            _invoiceRepositoryMock.Setup(r => r.AddAsync(nullInvoice))
-                                  .ThrowsAsync(new ArgumentNullException(nameof(nullInvoice), "The invoice cannot be null."));
-
-            // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                await _invoiceRepositoryMock.Object.AddAsync(nullInvoice));
-
-            // Verifica el mensaje completo de la excepción
-            Assert.AreEqual("The invoice cannot be null. (Parameter 'nullInvoice')", ex.Message);
-        }
-
-        /// <summary>
-        /// TC-IS-008 - Test to verify that an ArgumentException is thrown when the reservation ID is invalid.
-        /// </summary>
-        [Test]
-        public void GetByReservationIdAsync_InvalidReservationId_ThrowsArgumentException()
-        {
-            // Arrange
-            int invalidReservationId = 0;
-            _invoiceRepositoryMock.Setup(r => r.GetByReservationIdAsync(invalidReservationId))
-                                  .ThrowsAsync(new ArgumentException("Reservation ID must be greater than zero.", nameof(invalidReservationId)));
-
-            // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () =>
-                await _invoiceRepositoryMock.Object.GetByReservationIdAsync(invalidReservationId));
-
-            // Verifica el mensaje completo de la excepción
-            Assert.AreEqual("Reservation ID must be greater than zero. (Parameter 'invalidReservationId')", ex.Message);
-        }
-
-        /// <summary>
-        /// TC-IS-009 - Test to verify that an InvalidOperationException is thrown when no invoice is found for the reservation ID.
-        /// </summary>
-        [Test]
-        public void GetByReservationIdAsync_NonExistingInvoice_ThrowsInvalidOperationException()
-        {
-            // Arrange
-            int reservationId = 999;
-            _invoiceRepositoryMock.Setup(r => r.GetByReservationIdAsync(reservationId))
-                                  .ThrowsAsync(new InvalidOperationException($"No invoice found for reservation ID {reservationId}."));
-
-            // Act & Assert
-            var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _invoiceRepositoryMock.Object.GetByReservationIdAsync(reservationId));
-
-            Assert.AreEqual($"No invoice found for reservation ID {reservationId}.", ex.Message);
+       
         }
     }
 }
