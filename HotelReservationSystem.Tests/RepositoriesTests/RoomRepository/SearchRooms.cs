@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HotelReservationSystem.Tests.RoomRepositoryTests
+namespace HotelReservationSystem.Tests.RepositoriesTests
 {
     [TestFixture]
     public class SearchRoomsTests
@@ -44,10 +44,10 @@ namespace HotelReservationSystem.Tests.RoomRepositoryTests
         [Test]
         public async Task SearchAsync_ValidCriteria_ReturnsMatchingRooms()
         {
-            string? type = "Deluxe";      
-            decimal? minPrice = null;       
-            decimal? maxPrice = null;      
-            bool? available = true;    
+            string? type = "Deluxe";
+            decimal? minPrice = null;
+            decimal? maxPrice = null;
+            bool? available = true;
 
             var result = await _roomRepository.SearchAsync(type, minPrice, maxPrice, available);
 
@@ -58,10 +58,10 @@ namespace HotelReservationSystem.Tests.RoomRepositoryTests
             }
 
             // Assert: Verify the expected outcomes
-            Assert.IsNotNull(result, "The result should not be null"); 
-            Assert.AreEqual(2, result.Count(), "Should return 2 rooms"); 
+            Assert.IsNotNull(result, "The result should not be null");
+            Assert.AreEqual(2, result.Count(), "Should return 2 rooms");
             Assert.IsTrue(result.All(r => r.Type.Contains("Deluxe") && r.Available), "All rooms should be Deluxe and available"); // Validate all returned rooms match criteria
-            Assert.IsTrue(result.Any(r => r.Id == 1), "Should include the room with Id 1"); 
+            Assert.IsTrue(result.Any(r => r.Id == 1), "Should include the room with Id 1");
             Assert.IsTrue(result.Any(r => r.Id == 3), "Should include the room with Id 3");
             _contextMock.Verify(c => c.Rooms, Times.Once());
         }
@@ -72,18 +72,18 @@ namespace HotelReservationSystem.Tests.RoomRepositoryTests
         [Test]
         public async Task SearchAsync_NoMatchingCriteria_ReturnsEmptyList()
         {
-            string? type = "Penthouse"; 
-            decimal? minPrice = null;  
-            decimal? maxPrice = null;   
-            bool? available = null;      
+            string? type = "Penthouse";
+            decimal? minPrice = null;
+            decimal? maxPrice = null;
+            bool? available = null;
 
             var result = await _roomRepository.SearchAsync(type, minPrice, maxPrice, available);
 
             Console.WriteLine($"Result count: {result.Count()}");
 
-            Assert.IsNotNull(result, "The result should not be null"); 
-            Assert.AreEqual(0, result.Count(), "Should return 0 rooms"); 
-            _contextMock.Verify(c => c.Rooms, Times.Once()); 
+            Assert.IsNotNull(result, "The result should not be null");
+            Assert.AreEqual(0, result.Count(), "Should return 0 rooms");
+            _contextMock.Verify(c => c.Rooms, Times.Once());
         }
     }
 }

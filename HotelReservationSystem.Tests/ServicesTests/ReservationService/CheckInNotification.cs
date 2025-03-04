@@ -3,7 +3,7 @@ using HotelReservationSystem.Core.Services;
 using HotelReservationSystem.Infrastructure.Models;
 using HotelReservationSystem.Infrastructure.Interfaces;
 
-namespace HotelReservationSystem.Tests
+namespace HotelReservationSystem.Tests.ServicesTests
 {
     [TestFixture]
     public class CheckInNotification

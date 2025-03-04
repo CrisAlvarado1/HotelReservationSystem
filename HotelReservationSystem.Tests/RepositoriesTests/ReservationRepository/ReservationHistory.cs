@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HotelReservationSystem.Infrastructure.Data.Enum;
 
-namespace HotelReservationSystem.Tests.ReservationRepositoryTests
+namespace HotelReservationSystem.Tests.RepositoriesTests
 {
     [TestFixture]
     public class ReservationHistory
@@ -67,15 +67,15 @@ namespace HotelReservationSystem.Tests.ReservationRepositoryTests
                 }
             };
 
-            _reservations.AddRange(reservations); 
+            _reservations.AddRange(reservations);
 
-         
+
             var result = await _reservationRepository.GetUserReservationHistoryAsync(userId);
 
-           
+
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Count());
-            Assert.AreEqual(reservations[1].Id, result.First().Id); 
+            Assert.AreEqual(reservations[1].Id, result.First().Id);
             Assert.AreEqual(reservations[0].Id, result.Last().Id);
         }
 
@@ -85,8 +85,8 @@ namespace HotelReservationSystem.Tests.ReservationRepositoryTests
         [Test]
         public async Task GetUserReservationHistoryAsync_InvalidUserId_ShouldReturnEmptyList()
         {
-          
-            var userId = 999; 
+
+            var userId = 999;
 
             _contextMock.Setup(c => c.Reservations).ReturnsDbSet(new List<Reservation>());
 

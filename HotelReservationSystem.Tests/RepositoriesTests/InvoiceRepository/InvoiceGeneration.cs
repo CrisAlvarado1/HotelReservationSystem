@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 
 
-namespace HotelReservationSystem.Tests.InvoiceRepositoryTest
+namespace HotelReservationSystem.Tests.RepositoriesTests
 {
     [TestFixture]
     public class InvoiceGeneration
